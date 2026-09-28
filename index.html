@@ -3,7 +3,15 @@
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AQUASENSE MINE — Smart Mining Water Quality Monitoring &amp; Treatment System</title>
+<title>AquaSense Mine | Mining Water Monitoring Prototype</title>
+<meta name="description" content="Explore the AquaSense Mine interactive prototype for mining water quality monitoring, treatment recommendations, and public water-safety status.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://pratikyadavv077.github.io/aquasense-mine/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AquaSense Mine | Mining Water Monitoring Prototype">
+<meta property="og:description" content="Interactive prototype for mining water monitoring and treatment. Uses sample data; not an official government service.">
+<meta property="og:url" content="https://pratikyadavv077.github.io/aquasense-mine/">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
@@ -90,6 +98,8 @@ html[data-lang="hi"] .hi.blk{display:block;}
 .gov-footer a:hover{text-decoration:underline; color:#fff;}
 .gov-footer-bottom{border-top:1px solid rgba(255,255,255,0.15); margin-top:20px; padding-top:12px; max-width:1200px; margin-left:auto; margin-right:auto; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:10.5px; color:#9FB3CC;}
 .gov-page-wrap{display:flex; flex-direction:column; min-height:100vh;}
+.prototype-banner{background:#FFF4D6; color:#4C3900; border-bottom:1px solid #E6CF82; padding:8px 18px; text-align:center; font:600 12px/1.45 Arial,sans-serif;}
+.prototype-banner .hi{display:none;}html[data-lang="hi"] .prototype-banner .en{display:none;}html[data-lang="hi"] .prototype-banner .hi{display:inline;}
 @media (max-width: 760px){
   .gov-header{flex-wrap:wrap;}
   .gov-footer .gf-grid{grid-template-columns:1fr 1fr;}
@@ -427,6 +437,8 @@ td.strong{color:var(--text); font-weight:600;}
   </div>
 </div>
 
+<div class="prototype-banner"><span class="en">Interactive prototype · Sample data · Not an official government service</span><span class="hi">इंटरैक्टिव प्रोटोटाइप · नमूना डेटा · यह आधिकारिक सरकारी सेवा नहीं है</span></div>
+<div class="gov-page-wrap">
 <div class="gov-page-wrap">
 <div id="auth-gate">
   <div class="auth-card">
@@ -947,60 +959,7 @@ td.strong{color:var(--text); font-weight:600;}
     <div class="stage-item">
       <div class="s-head"><div class="s-name"><span class="s-idx">02</span>pH Neutralizer — Lime Dosing</div></div>
       <div class="stage-vals">
-        <div><span class="v-lbl">pH</span>6.24</div>
-        <div><span class="v-lbl">Turbidity</span>391.82 NTU</div>
-        <div><span class="v-lbl">TDS</span>1789 mg/L</div>
-        <div><span class="v-lbl">Temp</span>34.9°C</div>
-      </div>
-      <div class="mode-note">Lime slurry dosed — some precipitate turbidity added, minor chemical TDS increase.</div>
-      
-    </div>
-    <div class="stage-item">
-      <div class="s-head"><div class="s-name"><span class="s-idx">03</span>Sedimentation + Sand Filter</div></div>
-      <div class="stage-vals">
-        <div><span class="v-lbl">pH</span>6.24</div>
-        <div><span class="v-lbl">Turbidity</span>31.35 NTU</div>
-        <div><span class="v-lbl">TDS</span>1789 mg/L</div>
-        <div><span class="v-lbl">Temp</span>34.9°C</div>
-      </div>
-      <div class="mode-note">Sedimentation + multi-media sand filter — strong reduction, extreme loads leave residual NTU.</div>
-      
-    </div>
-    <div class="stage-item">
-      <div class="s-head"><div class="s-name"><span class="s-idx">04</span>Dilution / Coagulation</div><span class="stage-flag warn">INEFFECTIVE — HIGH TDS (dissolved salts not removed)</span></div>
-      <div class="stage-vals">
-        <div><span class="v-lbl">pH</span>6.24</div>
-        <div><span class="v-lbl">Turbidity</span>31.35 NTU</div>
-        <div><span class="v-lbl">TDS</span>1700 mg/L</div>
-        <div><span class="v-lbl">Temp</span>34.9°C</div>
-      </div>
-      <div class="mode-note">Dilution / conventional coagulation has little effect on dissolved solids.</div>
-      
-    </div>
-    <div class="stage-item">
-      <div class="s-head"><div class="s-name"><span class="s-idx">05</span>Passive Heat Dissipation</div></div>
-      <div class="stage-vals">
-        <div><span class="v-lbl">pH</span>6.24</div>
-        <div><span class="v-lbl">Turbidity</span>31.35 NTU</div>
-        <div><span class="v-lbl">TDS</span>1700 mg/L</div>
-        <div><span class="v-lbl">Temp</span>33.4°C</div>
-      </div>
-      <div class="mode-note">Passive heat dissipation toward ambient — boundary alarm only, no recovery.</div>
-      
-    <div class="kw-gauge">
-      <div class="kw-ring" style="--pct:0"><span>0</span></div>
-      <div class="kw-text">Geothermal Heat Energy Harvested<br><b>0 kW</b> at assumed 5 L/s flow, target discharge 22°C</div>
-    </div>
-    </div>
-    <div class="stage-item">
-      <div class="s-head"><div class="s-name"><span class="s-idx">06</span>Clean Permeate — Discharge</div></div>
-      <div class="stage-vals">
-        <div><span class="v-lbl">pH</span>6.24</div>
-        <div><span class="v-lbl">Turbidity</span>31.35 NTU</div>
-        <div><span class="v-lbl">TDS</span>1700 mg/L</div>
-        <div><span class="v-lbl">Temp</span>33.4°C</div>
-      </div>
-      <div class="mode-note">Final monitored discharge/reuse point.</div>
+        <div><span class="v-lbl">pH</div>
       
     </div></div>
       </section>
@@ -1008,91 +967,16 @@ td.strong{color:var(--text); font-weight:600;}
       <!-- VERIFICATION -->
       <section class="screen" id="screen-verification">
         <div class="section-head">
-          <div><h2>Post-Treatment Verification</h2><p>Secondary quality check — before vs after, treatment efficiency, SAFE / RE-TREAT / ESCALATE</p></div>
-        </div>
-        <div id="verdict-banner"><div class="verdict-banner"><div><div class="v-title">No Treatment Cycle Run Yet</div><div class="v-sub">Run a treatment cycle from the Purification screen to perform the secondary quality check.</div></div></div></div>
-        <div class="card" style="padding:0; overflow:hidden;">
-          <div class="verify-compare">
-            <div class="verify-col"><h3>Raw Mine Water (Inlet)</h3><div id="verify-raw"><div class="vparam"><span class="lbl">pH</span><span>4.16 <span class="delta flat">raw 3.8–4.8</span></span></div><div class="vparam"><span class="lbl">Turbidity</span><span>362.8NTU <span class="delta flat">raw 280–450NTU</span></span></div><div class="vparam"><span class="lbl">TDS/EC</span><span>1737mg/L <span class="delta flat">raw 1400–2200mg/L</span></span></div><div class="vparam"><span class="lbl">Temperature</span><span>34.9°C <span class="delta flat">raw 32–38°C</span></span></div><div class="vparam"><span class="lbl">Geothermal kW</span><span>—</span></div></div></div>
-            <div class="verify-arrow">→</div>
-            <div class="verify-col"><h3>Treated Water (Latest Cycle)</h3><div id="verify-treated"><div class="vparam"><span class="lbl">pH</span><span>4.16 <span class="delta bad">misses benchmark 7–7.4</span></span></div><div class="vparam"><span class="lbl">Turbidity</span><span>362.8NTU <span class="delta bad">misses benchmark &lt; 1 NTU</span></span></div><div class="vparam"><span class="lbl">TDS/EC</span><span>1737mg/L <span class="delta bad">misses benchmark 180–350 mg/L</span></span></div><div class="vparam"><span class="lbl">Temperature</span><span>34.9°C <span class="delta bad">misses benchmark 24–26°C</span></span></div><div class="vparam"><span class="lbl">Geothermal kW</span><span>0 kW <span class="delta good">recovered</span></span></div></div></div>
-          </div>
-        </div>
-        <div class="banner" style="margin-top:16px;">
-          System note: these readings confirm the monitored parameters changed through treatment. They do <b>not</b> certify microbiological safety or specific heavy-metal/radionuclide removal — that requires laboratory / validated testing per IS 10500.
-        </div>
-        <div class="card">
-          <div class="card-title">Treatment Cycle Log</div>
-          <table id="verify-log-table">
-            <thead><tr><th>Cycle</th><th>Time</th><th>Turbidity In→Out</th><th>TDS In→Out</th><th>pH In→Out</th><th>Efficiency</th><th>Verdict</th></tr></thead>
-            <tbody id="verify-log-body"><tr><td colspan="7" style="text-align:center; color:var(--text-dimmer);">No verification runs logged yet.</td></tr></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- STATIONS -->
-      <section class="screen" id="screen-stations">
-        <div class="section-head"><div><h2>Stations</h2><p>Jharkhand mining-hub monitoring registry — click a card or map marker to switch active station</p></div></div>
-        <div class="card map-card">
-          <div class="map-head">
-            <div class="card-title" style="margin-bottom:2px;">Mining Hub Locations — Jharkhand</div>
-            <p class="note" style="margin-bottom:0;">Green = purified/safe, Red = affected/contaminated. Click a marker to switch the active monitoring station.</p>
-          </div>
-          <div id="jharkhand-map"></div>
-          <div class="map-legend-row" id="map-legend"></div>
-        </div>
-        <div class="grid cols-2" id="stations-list"><div class="card station-card active-station" data-station="JHR" style="flex-direction:column; align-items:stretch; gap:12px;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-        <div class="s-info">
-          <div class="s-name">WS-JHR — Jharia Coalfield</div>
+          <div><h2>Post-Treatment Verification</h2><p>Secondary quality check — before vame">WS-JHR — Jharia Coalfield</div>
           <div class="s-loc">Dhanbad, Jharkhand · 23.74° N, 86.41° E</div>
         </div>
         <span class="pill normal"><span class="dot"></span>NORMAL</span>
       </div>
-      <div class="cause-impact" style="margin-bottom:0;">
-        <div class="ci-box" style="background:var(--coral-glow); border:1px solid rgba(225,88,79,.25);">
-          <div class="ci-lbl" style="color:var(--coral);">🔴 Raw Mine Water — Unsafe</div>
-          <div class="s-range">pH 3.8–4.8 · Turb 280–450 NTU · TDS 1400–2200 mg/L · Temp 32–38°C</div>
-        </div>
-        <div class="ci-box" style="background:var(--teal-glow); border:1px solid rgba(47,182,166,.25);">
-          <div class="ci-lbl" style="color:var(--teal);">🟢 Purified Benchmark — IS 10500</div>
-          <div class="s-range">pH 7–7.4 · Turb &lt; 1 NTU · TDS 180–350 mg/L · Temp 24–26°C</div>
-        </div>
-      </div>
-      <div class="note" style="margin-top:2px;"><b style="color:var(--text-dim);">Primary issue &amp; target stage:</b> Acid mine drainage, sulfuric acid, coal fines, thermal energy extraction.</div>
-    </div><div class="card station-card " data-station="BOK" style="flex-direction:column; align-items:stretch; gap:12px;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-        <div class="s-info">
-          <div class="s-name">WS-BOK — Bokaro Coalfield</div>
-          <div class="s-loc">Bokaro, Jharkhand · 23.78° N, 85.96° E</div>
-        </div>
-        <button class="btn small">Switch</button>
-      </div>
-      <div class="cause-impact" style="margin-bottom:0;">
-        <div class="ci-box" style="background:var(--coral-glow); border:1px solid rgba(225,88,79,.25);">
-          <div class="ci-lbl" style="color:var(--coral);">🔴 Raw Mine Water — Unsafe</div>
-          <div class="s-range">pH 5.6–6.4 · Turb 180–320 NTU · TDS 850–1350 mg/L · Temp 27–31°C</div>
-        </div>
-        <div class="ci-box" style="background:var(--teal-glow); border:1px solid rgba(47,182,166,.25);">
-          <div class="ci-lbl" style="color:var(--teal);">🟢 Purified Benchmark — IS 10500</div>
-          <div class="s-range">pH 7.1–7.5 · Turb &lt; 0.8 NTU · TDS 150–300 mg/L · Temp 24–26°C</div>
-        </div>
-      </div>
-      <div class="note" style="margin-top:2px;"><b style="color:var(--text-dim);">Primary issue &amp; target stage:</b> Washery slurry, suspended coal dust, dissolved carbonates.</div>
-    </div><div class="card station-card " data-station="NOA" style="flex-direction:column; align-items:stretch; gap:12px;">
+      <div class="cause-impact" style="margn-items:stretch; gap:12px;">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
         <div class="s-info">
           <div class="s-name">WS-NOA — Noamundi &amp; Kiriburu</div>
-          <div class="s-loc">West Singhbhum, Jharkhand · 22.15° N, 85.50° E</div>
-        </div>
-        <button class="btn small">Switch</button>
-      </div>
-      <div class="cause-impact" style="margin-bottom:0;">
-        <div class="ci-box" style="background:var(--coral-glow); border:1px solid rgba(225,88,79,.25);">
-          <div class="ci-lbl" style="color:var(--coral);">🔴 Raw Mine Water — Unsafe</div>
-          <div class="s-range">pH 6.5–7.4 · Turb 400–850 NTU · TDS 350–650 mg/L · Temp 25–29°C</div>
-        </div>
-        <div class="ci-box" style="background:var(--teal-glow); border:1px solid rgba(47,182,166,.25);">
+          <div class="s-loc">W class="ci-box" style="background:var(--teal-glow); border:1px solid rgba(47,182,166,.25);">
           <div class="ci-lbl" style="color:var(--teal);">🟢 Purified Benchmark — IS 10500</div>
           <div class="s-range">pH 7.2–7.4 · Turb &lt; 0.5 NTU · TDS 200–380 mg/L · Temp 24–26°C</div>
         </div>
@@ -1167,33 +1051,7 @@ td.strong{color:var(--text); font-weight:600;}
       <h4><span class="en">Policies</span><span class="hi">नीतियां</span></h4>
       <ul>
         <li><a href="#" onclick="return false;"><span class="en">Terms of Use</span><span class="hi">उपयोग की शर्तें</span></a></li>
-        <li><a href="#" onclick="return false;"><span class="en">Privacy Policy</span><span class="hi">गोपनीयता नीति</span></a></li>
-        <li><a href="#" onclick="return false;"><span class="en">Accessibility Statement</span><span class="hi">पहुंच-योग्यता विवरण</span></a></li>
-        <li><a href="#" onclick="return false;"><span class="en">Hyperlinking Policy</span><span class="hi">हाइपरलिंकिंग नीति</span></a></li>
-      </ul>
-    </div>
-    <div>
-      <h4><span class="en">Contact</span><span class="hi">संपर्क करें</span></h4>
-      <ul>
-        <li><span class="en">Department of Mines &amp; Geology</span><span class="hi">खान एवं भूतत्व विभाग</span></li>
-        <li><span class="en">Nepal House, Doranda, Ranchi — 834002</span><span class="hi">नेपाल हाउस, डोरंडा, रांची — 834002</span></li>
-        <li>Email: <span style="font-family:var(--font-mono);">mines-jh[at]gov[dot]in</span></li>
-        <li id="gov-visitor-count"><span class="en">Total Visits:</span><span class="hi">कुल विज़िट:</span> <span id="visitor-count-val">—</span></li>
-      </ul>
-    </div>
-  </div>
-  <div class="gov-footer-bottom">
-    <span>© <span id="gov-footer-year">2026</span> <span class="en">Department of Mines &amp; Geology, Government of Jharkhand. All Rights Reserved.</span><span class="hi">खान एवं भूतत्व विभाग, झारखंड सरकार। सर्वाधिकार सुरक्षित।</span></span>
-    <span><span class="en">Content Owned &amp; Maintained by Department of Mines &amp; Geology, Govt. of Jharkhand</span><span class="hi">सामग्री का स्वामित्व एवं रखरखाव खान एवं भूतत्व विभाग, झारखंड सरकार द्वारा</span> &nbsp;|&nbsp; <span class="en">Last Updated:</span><span class="hi">अंतिम अद्यतन:</span> <span id="gov-last-updated">28 Sept 2026</span></span>
-  </div>
-</footer>
-</div>
-
-<script>
-'use strict';
-
-/* ---------------------- GOVERNMENT CHROME: ACCESSIBILITY & I18N ---------------------- */
-function setFontSize(size){
+        <li><a href="#" onclick="return false;"><span class="en">Privacy Policy</span><span class(size){
   const html = document.documentElement;
   html.classList.remove('fs-small','fs-normal','fs-large');
   html.classList.add('fs-' + size);
@@ -1219,34 +1077,7 @@ async function initGovFooterWidgets(){
   const yearEl = document.getElementById('gov-footer-year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
   const updatedEl = document.getElementById('gov-last-updated');
-  if (updatedEl) updatedEl.textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
-  const countEl = document.getElementById('visitor-count-val');
-  if (countEl){
-    try {
-      let current = 128460; // baseline seed so the counter looks like an established portal
-      try {
-        const res = await window.storage.get('gov-visitor-count', true);
-        if (res && res.value) current = parseInt(res.value, 10) || current;
-      } catch(e){ /* first-ever visit, key doesn't exist yet */ }
-      current += 1;
-      countEl.textContent = current.toLocaleString('en-IN');
-      window.storage.set('gov-visitor-count', String(current), true).catch(() => {});
-    } catch(e){
-      countEl.textContent = '—';
-    }
-  }
-}
-/* ============================================================
-   AQUASENSE MINE — Smart Mining Water Quality Monitoring &
-   Treatment System. Sections: CONFIG -> STATE -> SIMULATION ->
-   STATUS/SEVERITY ENGINE -> PROBLEM DETECTION -> TREATMENT
-   ENGINE (operational) -> TREATMENT KB (recommendations) ->
-   STORAGE -> ALERTS -> CYCLE/VERIFICATION -> RENDER -> BOOT
-   ============================================================ */
-
-/* ---------------------- CONFIG: limits & stations ---------------------- */
-const LIMITS = {
-  ph:            { normal:[6.5,8.5], warning:[6.0,9.2], unit:'', label:'pH' },
+  if (updatedEl) updatedEh:            { normal:[6.5,8.5], warning:[6.0,9.2], unit:'', label:'pH' },
   turbidity_ntu: { normal:[0,1],     warning:[0,5],      unit:'NTU', label:'Turbidity' },
   tds_mg_l:      { normal:[0,500],   warning:[0,2000],   unit:'mg/L', label:'TDS/EC' },
   temperature_c: { normal:[15,32],   warning:[10,38],    unit:'°C', label:'Temperature' }
@@ -2350,5 +2181,6 @@ document.getElementById('btn-sign-out').addEventListener('click', signOut);
 
 
 </body></html>
+
 
 
