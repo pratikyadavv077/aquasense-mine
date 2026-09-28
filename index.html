@@ -1,0 +1,2353 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQUASENSE MINE — Smart Mining Water Quality Monitoring &amp; Treatment System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+  --ink:#0A181E; --panel:#102028; --panel-2:#152C36; --panel-3:#1B3540;
+  --border:rgba(234,243,241,0.09); --border-2:rgba(234,243,241,0.18);
+  --text:#EAF3F1; --text-dim:#8FAAAF; --text-dimmer:#5E7A80;
+  --teal:#2FB6A6; --teal-glow:rgba(47,182,166,0.18);
+  --low:#C9C24A; --low-glow:rgba(201,194,74,0.16);
+  --amber:#E8A33D; --amber-glow:rgba(232,163,61,0.16);
+  --coral:#E1584F; --coral-glow:rgba(225,88,79,0.18);
+  --critical:#FF4B4B; --critical-glow:rgba(255,75,75,0.22);
+  --violet:#8E7CE8; --violet-glow:rgba(142,124,232,0.18);
+  --grey:#6C8791; --grey-glow:rgba(108,135,145,0.16);
+  --shadow:rgba(0,0,0,0.4);
+  --font-display:'Space Grotesk', sans-serif; --font-body:'Inter', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  --radius:10px;
+  --navy:#0B2447; --navy-2:#0F3060; --saffron:#FF9933; --india-green:#128807;
+  --govt-gold:#C9A24B;
+  --fs-scale:1;
+}
+:root[data-theme="light"]{
+  --ink:#F3F6F5; --panel:#FFFFFF; --panel-2:#F1F5F4; --panel-3:#E6ECEA;
+  --border:rgba(16,36,43,0.10); --border-2:rgba(16,36,43,0.20);
+  --text:#0F2229; --text-dim:#3E5860; --text-dimmer:#748C92;
+  --teal:#178576; --teal-glow:rgba(23,133,118,0.12);
+  --low:#8A7E12; --low-glow:rgba(138,126,18,0.12);
+  --amber:#A66A16; --amber-glow:rgba(166,106,22,0.12);
+  --coral:#C23B33; --coral-glow:rgba(194,59,51,0.12);
+  --critical:#D62B2B; --critical-glow:rgba(214,43,43,0.14);
+  --violet:#5E48C7; --violet-glow:rgba(94,72,199,0.12);
+  --grey:#5E767C; --grey-glow:rgba(94,118,124,0.12);
+  --shadow:rgba(16,36,43,0.14);
+}
+html.high-contrast{ filter:none; }
+html.high-contrast :root, html.high-contrast{
+  --ink:#000000 !important; --panel:#000000 !important; --panel-2:#0A0A0A !important; --panel-3:#141414 !important;
+  --border:rgba(255,255,0,0.35) !important; --border-2:rgba(255,255,0,0.6) !important;
+  --text:#FFFF00 !important; --text-dim:#FFFF00 !important; --text-dimmer:#FFD400 !important;
+  --teal:#00FFFF !important; --teal-glow:rgba(0,255,255,0.25) !important;
+}
+html.fs-small{ --fs-scale:0.9; }
+html.fs-normal{ --fs-scale:1; }
+html.fs-large{ --fs-scale:1.18; }
+body{ font-size:calc(14px * var(--fs-scale)); }
+.hi{display:none;}
+html[data-lang="hi"] .en{display:none;}
+html[data-lang="hi"] .hi{display:inline;}
+html[data-lang="hi"] .hi.blk{display:block;}
+
+/* ===================== GOVERNMENT OF JHARKHAND CHROME ===================== */
+.gov-util-bar{background:var(--navy); color:#EAF1FA; font-size:11px; padding:5px 18px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; font-family:var(--font-body); position:relative; z-index:50;}
+.gov-util-bar a{color:#EAF1FA; text-decoration:none; opacity:.9;}
+.gov-util-bar a:hover{opacity:1; text-decoration:underline;}
+.gov-util-bar .gu-sep{opacity:.4;}
+.gov-util-bar .gu-spacer{flex:1;}
+.gov-util-tools{display:flex; align-items:center; gap:10px;}
+.gov-util-tools button{background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); color:#fff; font-size:10.5px; font-weight:600; padding:2px 7px; border-radius:4px; line-height:1.5;}
+.gov-util-tools button:hover{background:rgba(255,255,255,0.22);}
+.gov-util-tools button.active-tool{background:var(--saffron); border-color:var(--saffron); color:#2a1400;}
+.gov-header{background:linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%); padding:14px 24px; display:flex; align-items:center; gap:16px; border-bottom:3px solid var(--govt-gold);}
+.gov-emblem{width:52px; height:52px; flex-shrink:0; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ffffff 0%, #dfe9f5 40%, #b9c9dd 100%); display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 3px rgba(255,255,255,0.15), 0 2px 8px rgba(0,0,0,0.35);}
+.gov-header-text{line-height:1.3; flex:1;}
+.gov-header-text .gh-dept{font-family:var(--font-display); font-weight:700; font-size:16.5px; color:#fff; letter-spacing:.01em;}
+.gov-header-text .gh-state{font-family:var(--font-body); font-weight:600; font-size:12.5px; color:var(--saffron); margin-top:1px;}
+.gov-header-text .gh-tag{font-size:10.5px; color:#B9C9DD; margin-top:2px;}
+.gov-header-right{display:flex; align-items:center; gap:10px;}
+.gov-header-right .gov-emblem{width:44px; height:44px;}
+.gov-tricolor{height:5px; width:100%; background:linear-gradient(90deg, var(--saffron) 0 33.3%, #ffffff 33.3% 66.6%, var(--india-green) 66.6% 100%);}
+.gov-ticker-wrap{background:var(--panel-2); border-bottom:1px solid var(--border); padding:7px 18px; display:flex; align-items:center; gap:12px; overflow:hidden;}
+.gov-ticker-label{background:var(--coral); color:#fff; font-size:10px; font-weight:700; padding:3px 9px; border-radius:4px; flex-shrink:0; letter-spacing:.04em;}
+.gov-ticker-track{white-space:nowrap; overflow:hidden; flex:1; position:relative; height:16px;}
+.gov-ticker-track span{position:absolute; white-space:nowrap; font-size:11.5px; color:var(--text-dim); animation:gov-ticker-scroll 22s linear infinite;}
+@keyframes gov-ticker-scroll{ 0%{transform:translateX(100%);} 100%{transform:translateX(-100%);} }
+.gov-footer{background:var(--navy); color:#C9D6E8; padding:26px 24px 14px 24px; font-size:12px; margin-top:auto;}
+.gov-footer .gf-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:22px; max-width:1200px; margin:0 auto;}
+.gov-footer h4{color:#fff; font-size:12.5px; font-weight:700; margin-bottom:10px; letter-spacing:.03em;}
+.gov-footer ul{list-style:none;}
+.gov-footer li{margin-bottom:6px;}
+.gov-footer a{color:#C9D6E8; text-decoration:none; font-size:11.5px;}
+.gov-footer a:hover{text-decoration:underline; color:#fff;}
+.gov-footer-bottom{border-top:1px solid rgba(255,255,255,0.15); margin-top:20px; padding-top:12px; max-width:1200px; margin-left:auto; margin-right:auto; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:10.5px; color:#9FB3CC;}
+.gov-page-wrap{display:flex; flex-direction:column; min-height:100vh;}
+@media (max-width: 760px){
+  .gov-header{flex-wrap:wrap;}
+  .gov-footer .gf-grid{grid-template-columns:1fr 1fr;}
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{
+  background:
+    radial-gradient(1200px 600px at 100% -10%, rgba(47,182,166,0.07), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(142,124,232,0.05), transparent 60%),
+    var(--ink);
+  color:var(--text); font-family:var(--font-body); min-height:100vh; -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--teal-glow); color:var(--text);}
+a{color:inherit;}
+button,select{font-family:var(--font-body); cursor:pointer;}
+::-webkit-scrollbar{width:8px; height:8px;}
+::-webkit-scrollbar-thumb{background:var(--panel-3); border-radius:4px;}
+#app{display:flex; flex:1; min-height:0;}
+
+/* SIDEBAR */
+.sidebar{width:224px; flex-shrink:0; background:var(--panel); border-right:1px solid var(--border); display:flex; flex-direction:column; padding:22px 14px; position:sticky; top:0; height:100%; align-self:flex-start; max-height:100vh; overflow-y:auto;}
+.brand{display:flex; align-items:center; gap:10px; padding:0 8px 22px 8px; margin-bottom:14px; border-bottom:1px solid var(--border);}
+.brand-mark{width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg, var(--teal), #1c7d72); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:700; font-size:14px; color:#04211d; flex-shrink:0;}
+.brand-text{line-height:1.15;}
+.brand-text .name{font-family:var(--font-display); font-weight:700; font-size:14.5px; letter-spacing:0.02em;}
+.brand-text .sub{font-size:9.5px; color:var(--text-dimmer); text-transform:uppercase; letter-spacing:0.06em; margin-top:2px;}
+.nav{display:flex; flex-direction:column; gap:2px; flex:1;}
+.nav-item{display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; color:var(--text-dim); background:none; border:none; font-size:13px; font-weight:500; text-align:left; transition:background .15s, color .15s; width:100%;}
+.nav-item .ic{width:16px; text-align:center; flex-shrink:0; font-size:14px;}
+.nav-item:hover{background:var(--panel-2); color:var(--text);}
+.nav-item.active{background:var(--teal-glow); color:var(--teal);}
+.nav-item .nb{margin-left:auto; font-size:9.5px; font-family:var(--font-mono); background:var(--critical); color:#2a0402; padding:1px 6px; border-radius:100px; font-weight:700;}
+.nav-divider{height:1px; background:var(--border); margin:10px 4px;}
+.nav-label{font-size:9.5px; text-transform:uppercase; letter-spacing:0.09em; color:var(--text-dimmer); padding:10px 10px 2px;}
+.sidebar-foot{border-top:1px solid var(--border); padding-top:12px; margin-top:8px; font-size:10.5px; color:var(--text-dimmer); line-height:1.6;}
+.sidebar-foot b{color:var(--text-dim);}
+
+/* MAIN */
+.main{flex:1; min-width:0; display:flex; flex-direction:column;}
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 26px; border-bottom:1px solid var(--border); background:rgba(16,32,40,0.7); backdrop-filter:blur(6px); position:sticky; top:0; z-index:5; gap:16px; flex-wrap:wrap;}
+.topbar h1{font-family:var(--font-display); font-size:18px; font-weight:600;}
+.topbar .desc{font-size:11.5px; color:var(--text-dim); margin-top:2px;}
+.topbar-right{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.station-select{background:var(--panel-2); border:1px solid var(--border-2); color:var(--text); font-size:12px; font-weight:600; padding:9px 12px; border-radius:8px; font-family:var(--font-mono); max-width:230px;}
+
+.pill{display:inline-flex; align-items:center; gap:6px; padding:6px 11px; border-radius:100px; font-size:11px; font-weight:700; font-family:var(--font-mono); letter-spacing:0.02em; border:1px solid var(--border-2); text-transform:uppercase;}
+.dot{width:7px; height:7px; border-radius:50%; flex-shrink:0;}
+.pill.normal{background:var(--teal-glow); color:var(--teal); border-color:rgba(47,182,166,.35);}
+.pill.normal .dot{background:var(--teal); box-shadow:0 0 8px var(--teal);}
+.pill.low{background:var(--low-glow); color:var(--low); border-color:rgba(201,194,74,.35);}
+.pill.low .dot{background:var(--low);}
+.pill.medium{background:var(--amber-glow); color:var(--amber); border-color:rgba(232,163,61,.35);}
+.pill.medium .dot{background:var(--amber); box-shadow:0 0 8px var(--amber);}
+.pill.high{background:var(--coral-glow); color:var(--coral); border-color:rgba(225,88,79,.35);}
+.pill.high .dot{background:var(--coral); box-shadow:0 0 8px var(--coral);}
+.pill.critical{background:var(--critical-glow); color:var(--critical); border-color:rgba(255,75,75,.5); animation:pulse-crit 1.4s infinite;}
+.pill.critical .dot{background:var(--critical); box-shadow:0 0 10px var(--critical);}
+@keyframes pulse-crit{0%,100%{box-shadow:0 0 0 rgba(255,75,75,0);} 50%{box-shadow:0 0 14px rgba(255,75,75,0.45);}}
+.pill.offline,.pill.error{background:var(--grey-glow); color:var(--grey); border-color:rgba(108,135,145,.35);}
+.pill.offline .dot,.pill.error .dot{background:var(--grey);}
+
+.btn{padding:9px 14px; border-radius:8px; border:1px solid var(--border-2); background:var(--panel-2); color:var(--text); font-size:12.5px; font-weight:600; display:inline-flex; align-items:center; gap:7px; transition:all .15s;}
+.btn:hover{background:var(--panel-3); border-color:var(--teal);}
+.btn.primary{background:var(--teal); color:#04211d; border-color:var(--teal);}
+.btn.primary:hover{background:#3ecab8;}
+.btn.warn{background:var(--coral); color:#2a0906; border-color:var(--coral);}
+.btn.warn:hover{background:#ef6a61;}
+.btn:disabled{opacity:.45; cursor:not-allowed;}
+.btn.small{padding:6px 10px; font-size:11px;}
+.btn.tiny{padding:4px 8px; font-size:10px;}
+
+.content{padding:22px 26px 60px; flex:1;}
+.screen{display:none; animation:fade .25s ease;}
+.screen.active{display:block;}
+@keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+.grid{display:grid; gap:16px;}
+.grid.cols-4{grid-template-columns:repeat(4,1fr);}
+.grid.cols-3{grid-template-columns:repeat(3,1fr);}
+.grid.cols-2{grid-template-columns:repeat(2,1fr);}
+@media(max-width:1100px){.grid.cols-4{grid-template-columns:repeat(2,1fr);} .grid.cols-3{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){.grid.cols-4,.grid.cols-3,.grid.cols-2{grid-template-columns:1fr;}}
+
+.card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:18px;}
+.card-title{font-family:var(--font-display); font-size:12.5px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:8px;}
+
+.reading-card{position:relative; overflow:hidden;}
+.reading-card .param-name{font-size:12px; color:var(--text-dim); font-weight:500;}
+.reading-card .param-value{font-family:var(--font-mono); font-size:29px; font-weight:700; margin:8px 0 2px; display:flex; align-items:baseline; gap:6px;}
+.reading-card .param-value .unit{font-size:12.5px; color:var(--text-dimmer); font-weight:500;}
+.reading-card .param-range{font-size:10.5px; color:var(--text-dimmer); font-family:var(--font-mono);}
+.reading-card .badge{position:absolute; top:14px; right:14px; width:9px; height:9px; border-radius:50%;}
+.reading-card.status-normal .badge{background:var(--teal); box-shadow:0 0 10px var(--teal);}
+.reading-card.status-low .badge{background:var(--low);}
+.reading-card.status-medium .badge{background:var(--amber); box-shadow:0 0 10px var(--amber);}
+.reading-card.status-high .badge{background:var(--coral); box-shadow:0 0 10px var(--coral);}
+.reading-card.status-critical .badge{background:var(--critical); box-shadow:0 0 12px var(--critical); animation:pulse-crit 1.4s infinite;}
+.reading-card .sev-tag{position:absolute; bottom:14px; right:14px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; font-family:var(--font-mono); color:var(--text-dimmer);}
+
+.mode-toggle{display:flex; gap:4px; margin-top:10px; flex-wrap:wrap;}
+.mode-btn{flex:1; min-width:0; padding:6px 6px; border-radius:6px; border:1px solid var(--border-2); background:var(--panel-3); color:var(--text-dimmer); font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; text-align:center; transition:all .15s;}
+.mode-btn:hover{color:var(--text-dim);}
+.mode-btn.active{background:var(--teal); color:#04211d; border-color:var(--teal);}
+.mode-btn.active.tier-intl{background:var(--violet); border-color:var(--violet); color:#12081f;}
+.mode-btn.active.tier-fut{background:var(--amber); border-color:var(--amber); color:#241202;}
+
+.flow-ribbon{background:linear-gradient(180deg, var(--panel-2), var(--panel)); border:1px solid var(--border); border-radius:var(--radius); padding:22px 20px 18px; margin-bottom:20px; overflow-x:auto;}
+.flow-ribbon-title{font-family:var(--font-display); font-size:11.5px; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dimmer); margin-bottom:16px;}
+.flow-track{display:flex; align-items:flex-start; min-width:980px;}
+.flow-stage{display:flex; flex-direction:column; align-items:center; gap:8px; position:relative; flex:1;}
+.flow-node{width:36px; height:36px; border-radius:50%; border:2px solid var(--border-2); background:var(--panel-2); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dimmer); z-index:2; transition:all .3s; flex-shrink:0;}
+.flow-stage.lit .flow-node{border-color:var(--teal); background:var(--teal); color:#04211d; box-shadow:0 0 16px var(--teal-glow);}
+.flow-stage.lit-warn .flow-node{border-color:var(--coral); background:var(--coral); color:#2a0906; box-shadow:0 0 16px var(--coral-glow);}
+.flow-stage .flow-lbl{font-size:9.5px; color:var(--text-dimmer); text-align:center; white-space:normal; max-width:100px; line-height:1.3;}
+.flow-stage.lit .flow-lbl{color:var(--teal);}
+.flow-stage.lit-warn .flow-lbl{color:var(--coral);}
+.flow-line{position:absolute; top:17px; left:-50%; width:100%; height:2px; background:var(--border-2); z-index:1;}
+.flow-stage.lit .flow-line, .flow-stage.lit-warn .flow-line{background:var(--teal);}
+.flow-stage:first-child .flow-line{display:none;}
+
+.row-list{display:flex; flex-direction:column; gap:8px;}
+.alert-row{display:flex; align-items:flex-start; gap:12px; padding:13px 14px; border-radius:8px; background:var(--panel-2); border:1px solid var(--border); border-left:3px solid var(--grey);}
+.alert-row.sev-low{border-left-color:var(--low);}
+.alert-row.sev-medium{border-left-color:var(--amber);}
+.alert-row.sev-high{border-left-color:var(--coral);}
+.alert-row.sev-critical{border-left-color:var(--critical);}
+.alert-row.sev-info{border-left-color:var(--teal);}
+.alert-row.acked{opacity:0.45;}
+.alert-row .a-main{flex:1; min-width:0;}
+.alert-row .a-msg{font-size:13px; font-weight:600;}
+.alert-row .a-meta{font-size:11px; color:var(--text-dimmer); font-family:var(--font-mono); margin-top:3px;}
+.alert-row .a-detail{font-size:11.5px; color:var(--text-dim); margin-top:6px; line-height:1.5;}
+.alert-row .a-route{font-size:10.5px; color:var(--violet); margin-top:6px; font-weight:600;}
+
+table{width:100%; border-collapse:collapse; font-size:11.5px;}
+th{text-align:left; font-size:9.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-dimmer); padding:8px 9px; border-bottom:1px solid var(--border); font-weight:600;}
+td{padding:9px; border-bottom:1px solid var(--border); font-family:var(--font-mono); color:var(--text-dim);}
+tr:last-child td{border-bottom:none;}
+td.strong{color:var(--text); font-weight:600;}
+
+.chart-wrap{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px;}
+.chart-wrap canvas{max-height:180px;}
+
+.problem-block{border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); margin-bottom:22px; overflow:hidden;}
+.problem-head{padding:16px 18px; background:var(--panel-2); display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap;}
+.problem-head .p-name{font-family:var(--font-display); font-size:15px; font-weight:600;}
+.problem-head .p-param{font-size:11px; color:var(--text-dimmer); margin-top:2px; font-family:var(--font-mono);}
+.problem-body{padding:16px 18px;}
+.problem-facts{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px;}
+@media(max-width:900px){.problem-facts{grid-template-columns:repeat(2,1fr);}}
+.pf{background:var(--panel-3); border-radius:8px; padding:10px 12px;}
+.pf .pf-lbl{font-size:9.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-dimmer); margin-bottom:4px;}
+.pf .pf-val{font-family:var(--font-mono); font-size:13px; font-weight:600;}
+.cause-impact{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;}
+@media(max-width:800px){.cause-impact{grid-template-columns:1fr;}}
+.ci-box{background:var(--panel-3); border-radius:8px; padding:12px 14px;}
+.ci-box .ci-lbl{font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dimmer); margin-bottom:6px; font-weight:700;}
+.ci-box p{font-size:12.5px; color:var(--text-dim); line-height:1.55;}
+.route-banner{display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; background:var(--violet-glow); border:1px solid rgba(142,124,232,.35); color:var(--violet); font-size:12px; font-weight:600; margin-bottom:16px;}
+
+.kb-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+@media(max-width:1000px){.kb-grid{grid-template-columns:1fr;}}
+.kb-card{background:var(--panel-2); border:1px solid var(--border); border-radius:10px; padding:16px; display:flex; flex-direction:column;}
+.kb-card.selected{border-color:var(--teal); box-shadow:0 0 0 1px var(--teal) inset;}
+.kb-tier{font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:3px 9px; border-radius:100px; display:inline-block; margin-bottom:10px; width:fit-content;}
+.kb-tier.trad{background:var(--teal-glow); color:var(--teal);}
+.kb-tier.intl{background:var(--violet-glow); color:var(--violet);}
+.kb-tier.fut{background:var(--amber-glow); color:var(--amber);}
+.kb-title{font-family:var(--font-display); font-size:14px; font-weight:600; margin-bottom:8px; line-height:1.3;}
+.kb-ref{font-size:10.5px; color:var(--text-dimmer); font-style:italic; margin-bottom:10px; line-height:1.5;}
+.kb-sub{font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-dimmer); font-weight:700; margin:10px 0 5px;}
+.kb-list{list-style:none; display:flex; flex-direction:column; gap:5px;}
+.kb-list.steps{counter-reset:step;}
+.kb-list.steps li{counter-increment:step; padding-left:22px; position:relative; font-size:11.5px; color:var(--text-dim); line-height:1.5;}
+.kb-list.steps li::before{content:counter(step); position:absolute; left:0; top:0; width:16px; height:16px; border-radius:50%; background:var(--panel-3); color:var(--text-dim); font-size:9px; font-family:var(--font-mono); display:flex; align-items:center; justify-content:center; font-weight:700;}
+.kb-list.plain li{font-size:11.5px; color:var(--text-dim); line-height:1.5; padding-left:14px; position:relative;}
+.kb-list.plain li::before{content:'—'; position:absolute; left:0; color:var(--text-dimmer);}
+.kb-foot{margin-top:auto; padding-top:12px;}
+.kb-select-btn{width:100%; margin-top:12px;}
+
+.verdict-banner{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:18px 20px; border-radius:var(--radius); margin-bottom:18px; flex-wrap:wrap; border:1px solid var(--border);}
+.verdict-banner.safe{background:var(--teal-glow); border-color:rgba(47,182,166,.4);}
+.verdict-banner.retreat{background:var(--amber-glow); border-color:rgba(232,163,61,.4);}
+.verdict-banner.escalate{background:var(--critical-glow); border-color:rgba(255,75,75,.45);}
+.verdict-banner .v-title{font-family:var(--font-display); font-size:16px; font-weight:700;}
+.verdict-banner .v-sub{font-size:12px; color:var(--text-dim); margin-top:3px;}
+
+.stage-chain{display:flex; flex-direction:column; gap:10px;}
+.stage-item{background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:14px 16px;}
+.stage-item .s-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:6px;}
+.stage-item .s-name{font-size:13px; font-weight:600;}
+.stage-item .s-name .s-idx{color:var(--text-dimmer); font-family:var(--font-mono); font-size:11px; margin-right:7px;}
+.stage-vals{display:flex; gap:16px; font-family:var(--font-mono); font-size:12px; flex-wrap:wrap;}
+.stage-vals .v-lbl{color:var(--text-dimmer); font-size:9.5px; text-transform:uppercase; display:block; margin-bottom:2px; font-family:var(--font-body); letter-spacing:.05em;}
+.stage-flag{font-size:9.5px; padding:3px 8px; border-radius:100px; font-weight:700; text-transform:uppercase; letter-spacing:.03em;}
+.stage-flag.warn{background:var(--coral-glow); color:var(--coral);}
+.stage-flag.info{background:var(--teal-glow); color:var(--teal);}
+.stage-flag.save{background:var(--violet-glow); color:var(--violet);}
+.mode-note{font-size:10.5px; color:var(--text-dimmer); margin-top:8px; line-height:1.5;}
+
+.kw-gauge{display:flex; align-items:center; gap:14px; margin-top:10px; padding:12px; background:var(--panel-3); border-radius:8px;}
+.kw-ring{width:56px; height:56px; border-radius:50%; border:4px solid var(--panel); position:relative; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:conic-gradient(var(--amber) calc(var(--pct,0)*1%), var(--panel) 0);}
+.kw-ring::before{content:''; position:absolute; inset:5px; border-radius:50%; background:var(--panel-3);}
+.kw-ring span{position:relative; font-family:var(--font-mono); font-size:11px; font-weight:700; z-index:1;}
+.kw-text{font-size:11.5px; color:var(--text-dim); line-height:1.5;}
+.kw-text b{color:var(--amber); font-family:var(--font-mono); font-size:14px;}
+
+.verify-compare{display:grid; grid-template-columns:1fr auto 1fr; gap:0; align-items:center;}
+@media(max-width:800px){.verify-compare{grid-template-columns:1fr;}}
+.verify-col{padding:18px;}
+.verify-col h3{font-family:var(--font-display); font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim); margin-bottom:14px;}
+.verify-arrow{color:var(--text-dimmer); font-size:20px; padding:0 10px; text-align:center;}
+.vparam{display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); font-family:var(--font-mono); font-size:13px; flex-wrap:wrap; gap:4px;}
+.vparam:last-child{border-bottom:none;}
+.vparam .lbl{color:var(--text-dim); font-family:var(--font-body); font-size:12.5px;}
+.delta{font-size:10px; padding:2px 7px; border-radius:100px; margin-left:8px; font-family:var(--font-mono);}
+.delta.good{background:var(--teal-glow); color:var(--teal);}
+.delta.flat{background:var(--grey-glow); color:var(--grey);}
+.delta.bad{background:var(--coral-glow); color:var(--coral);}
+
+.station-card{display:flex; align-items:center; justify-content:space-between; gap:14px; cursor:pointer; transition:border-color .15s;}
+.station-card:hover{border-color:var(--teal);}
+.station-card.active-station{border-color:var(--teal); background:var(--teal-glow);}
+.station-card .s-info .s-name{font-family:var(--font-display); font-weight:600; font-size:14px;}
+.station-card .s-info .s-loc{font-size:11px; color:var(--text-dimmer); margin-top:2px;}
+.station-card .s-info .s-range{font-size:10px; color:var(--text-dimmer); font-family:var(--font-mono); margin-top:6px; line-height:1.6;}
+
+/* map */
+.map-card{padding:0; overflow:hidden;}
+.map-card .map-head{padding:16px 18px 0;}
+#jharkhand-map{height:420px; width:100%; background:var(--panel-2);}
+.map-legend-row{display:flex; gap:14px; flex-wrap:wrap; align-items:center; padding:12px 18px; border-top:1px solid var(--border);}
+.leaflet-popup-content-wrapper{background:#ffffff; color:#16262c; border-radius:8px; border:1px solid #d7e2e0;}
+.leaflet-popup-tip{background:#ffffff;}
+.leaflet-popup-content{font-family:var(--font-body); font-size:12px; line-height:1.5;}
+.leaflet-popup-content b{font-family:var(--font-display);}
+.leaflet-container{font-family:var(--font-body); background:#eef3f2 !important;}
+.leaflet-control-attribution{background:rgba(255,255,255,0.85) !important; color:#4b6a68 !important;}
+.leaflet-control-attribution a{color:#1c8577 !important;}
+.leaflet-bar a{background:#ffffff !important; color:#16262c !important; border-color:#d7e2e0 !important;}
+.leaflet-bar a:hover{background:#eef3f2 !important;}
+
+/* auth gate */
+#auth-gate{flex:1; display:flex; align-items:center; justify-content:center; background:radial-gradient(1200px 700px at 50% 0%, rgba(47,182,166,0.08), transparent 60%), var(--ink); padding:30px 20px;}
+.auth-card{width:100%; max-width:420px; background:var(--panel); border:1px solid var(--border-2); border-radius:14px; padding:30px 28px; box-shadow:0 20px 60px var(--shadow);}
+.auth-tabs{display:flex; gap:4px; background:var(--panel-3); border-radius:9px; padding:4px; margin-bottom:20px;}
+.auth-tab{flex:1; padding:9px 10px; border-radius:6px; border:none; background:none; color:var(--text-dimmer); font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; transition:all .15s;}
+.auth-tab.active{background:var(--teal); color:#04211d;}
+.auth-form-panel{}
+.phone-input-row{display:flex; align-items:stretch; gap:0; margin-bottom:14px;}
+.phone-prefix{display:flex; align-items:center; padding:0 12px; background:var(--panel-3); border:1px solid var(--border-2); border-right:none; border-radius:8px 0 0 8px; color:var(--text-dim); font-family:var(--font-mono); font-size:13px; font-weight:700;}
+.phone-input-row input{flex:1; border-radius:0 8px 8px 0; margin-bottom:0;}
+.kb-select-btn:disabled{opacity:.5; cursor:not-allowed;}
+.role-note{font-size:10px; color:var(--amber); margin-top:8px; font-weight:600;}
+.auth-card .auth-brand{display:flex; align-items:center; gap:10px; margin-bottom:18px;}
+.auth-card h2{font-family:var(--font-display); font-size:17px; font-weight:700; margin-bottom:8px; line-height:1.3;}
+.auth-card p.note{margin-bottom:18px;}
+.auth-field label{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dimmer); font-weight:700; display:block; margin-bottom:6px;}
+.auth-field input{width:100%; padding:11px 13px; border-radius:8px; border:1px solid var(--border-2); background:var(--panel-2); color:var(--text); font-family:var(--font-mono); font-size:13px; margin-bottom:14px;}
+.auth-field input:focus{outline:none; border-color:var(--teal);}
+.auth-error{background:var(--coral-glow); border:1px solid rgba(225,88,79,.4); color:var(--coral); font-size:11.5px; padding:9px 12px; border-radius:7px; margin-top:12px; display:none;}
+.auth-demo-note{font-size:10.5px; color:var(--text-dimmer); margin-top:16px; line-height:1.6; border-top:1px solid var(--border); padding-top:14px;}
+.auth-signed-badge{display:flex; align-items:center; justify-content:space-between; gap:6px; font-size:10.5px; margin-top:4px;}
+.auth-signed-badge button{background:none; border:none; color:var(--coral); font-size:10px; font-weight:700; text-decoration:underline; padding:0;}
+#app{display:none;}
+
+.empty{padding:34px 20px; text-align:center; color:var(--text-dimmer); font-size:12.5px;}
+.note{font-size:11.5px; color:var(--text-dimmer); line-height:1.6; margin-top:6px;}
+.section-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;}
+.section-head h2{font-family:var(--font-display); font-size:16px; font-weight:600;}
+.section-head p{font-size:12px; color:var(--text-dim); margin-top:2px;}
+.tag{font-size:9.5px; text-transform:uppercase; letter-spacing:.08em; padding:2px 7px; border-radius:5px; background:var(--panel-3); color:var(--text-dim); font-weight:700;}
+.simbar{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.banner{display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:8px; background:var(--panel-2); border:1px solid var(--border); font-size:12px; color:var(--text-dim); margin-bottom:18px;}
+.banner b{color:var(--text);}
+</style>
+</head>
+<body>
+
+<!-- ============ GOVERNMENT OF JHARKHAND OFFICIAL CHROME ============ -->
+<div class="gov-util-bar">
+  <a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#main-content"><span class="en">Skip to Main Content</span><span class="hi">मुख्य सामग्री पर जाएं</span></a>
+  <span class="gu-sep">|</span>
+  <a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;">🔒 <span class="en">Screen Reader Access</span><span class="hi">स्क्रीन रीडर एक्सेस</span></a>
+  <span class="gu-sep">|</span>
+  <a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;"><span class="en">Sitemap</span><span class="hi">साइटमैप</span></a>
+  <div class="gu-spacer"></div>
+  <div class="gov-util-tools">
+    <span class="en" style="opacity:.7;">Text Size:</span><span class="hi" style="opacity:.7;">फ़ॉन्ट आकार:</span>
+    <button type="button" id="fs-small-btn" onclick="setFontSize('small')">A-</button>
+    <button type="button" id="fs-normal-btn" class="active-tool" onclick="setFontSize('normal')">A</button>
+    <button type="button" id="fs-large-btn" onclick="setFontSize('large')">A+</button>
+    <span class="gu-sep">|</span>
+    <button type="button" id="contrast-btn" onclick="toggleHighContrast()"><span class="en">High Contrast</span><span class="hi">उच्च कंट्रास्ट</span></button>
+    <span class="gu-sep">|</span>
+    <button type="button" id="lang-btn" onclick="toggleLanguage()"><span class="en">हिंदी</span><span class="hi">English</span></button>
+  </div>
+</div>
+
+<div class="gov-header">
+  <div class="gov-emblem" title="Department Seal">
+    <svg width="34" height="34" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#0B2447" stroke-width="3"></circle>
+      <path d="M50 14 L58 40 L86 40 L63 56 L71 82 L50 66 L29 82 L37 56 L14 40 L42 40 Z" fill="#0B2447" opacity="0.85"></path>
+      <circle cx="50" cy="50" r="10" fill="#FF9933"></circle>
+    </svg>
+  </div>
+  <div class="gov-header-text">
+    <div class="gh-dept"><span class="en">Department of Mines &amp; Geology</span><span class="hi">खान एवं भूतत्व विभाग</span></div>
+    <div class="gh-state"><span class="en">Government of Jharkhand</span><span class="hi">झारखंड सरकार</span></div>
+    <div class="gh-tag"><span class="en">AQUASENSE MINE — Smart Mining Water Quality Monitoring &amp; Treatment System</span><span class="hi">एक्वासेंस माइन — स्मार्ट खनन जल गुणवत्ता निगरानी एवं उपचार प्रणाली</span></div>
+  </div>
+  <div class="gov-header-right">
+    <div style="text-align:right; line-height:1.3;">
+      <div style="font-size:10px; color:#B9C9DD;"><span class="en">An Initiative under</span><span class="hi">इसके तहत एक पहल</span></div>
+      <div style="font-size:12px; font-weight:700; color:#fff;">Digital Jharkhand</div>
+    </div>
+    <div class="gov-emblem">
+      <svg width="28" height="28" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="46" fill="none" stroke="#128807" stroke-width="3"></circle>
+        <path d="M50 20 C68 20 82 34 82 50 C82 66 68 80 50 80 C56 68 60 58 60 50 C60 42 56 32 50 20 Z" fill="#128807" opacity="0.85"></path>
+        <path d="M50 20 C32 20 18 34 18 50 C18 66 32 80 50 80 C44 68 40 58 40 50 C40 42 44 32 50 20 Z" fill="#FF9933" opacity="0.85"></path>
+      </svg>
+    </div>
+  </div>
+</div>
+<div class="gov-tricolor"></div>
+<div class="gov-ticker-wrap">
+  <span class="gov-ticker-label"><span class="en">Live Alert</span><span class="hi">लाइव सूचना</span></span>
+  <div class="gov-ticker-track">
+    <span class="en">Water quality across all Jharkhand mining hubs is monitored 24x7 &nbsp;•&nbsp; Public can check drinking-water safety status instantly via Public Login &nbsp;•&nbsp; Report contamination to your nearest District Mining Office</span>
+    <span class="hi">झारखंड के सभी खनन क्षेत्रों में जल गुणवत्ता की 24x7 निगरानी की जा रही है &nbsp;•&nbsp; कोई भी नागरिक Public Login से तुरंत पेयजल सुरक्षा स्थिति देख सकता है &nbsp;•&nbsp; संदूषण की सूचना अपने निकटतम जिला खनन कार्यालय को दें</span>
+  </div>
+</div>
+
+<div class="gov-page-wrap">
+<div id="auth-gate">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="brand-mark">AQ</div>
+      <div class="brand-text">
+        <div class="name">AQUASENSE MINE</div>
+        <div class="sub">Govt. of Jharkhand Access</div>
+      </div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-authority" type="button"><span class="en">Authority Login</span><span class="hi">प्राधिकरण लॉगिन</span></button>
+      <button class="auth-tab" id="tab-public" type="button"><span class="en">Public Login</span><span class="hi">सार्वजनिक लॉगिन</span></button>
+    </div>
+
+    <div id="auth-form-authority" class="auth-form-panel">
+      <h2><span class="en">Authorized Personnel Sign-In</span><span class="hi">अधिकृत कर्मी साइन-इन</span></h2>
+      <p class="note"><span class="en">Restricted to authorized Government of Jharkhand personnel (Directorate of Mines &amp; Geology / Jharkhand State Pollution Control Board). Full access — view data and control treatment settings.</span><span class="hi">झारखंड सरकार के अधिकृत कर्मियों (खान एवं भूतत्व निदेशालय / झारखंड राज्य प्रदूषण नियंत्रण बोर्ड) तक सीमित। पूर्ण पहुंच — डेटा देखें और उपचार सेटिंग्स नियंत्रित करें।</span></p>
+      <div class="auth-field">
+        <label><span class="en">Authorized Personnel ID</span><span class="hi">अधिकृत कर्मी आईडी</span></label>
+        <input type="text" id="auth-id-input" placeholder="e.g. GOJ-1001" autocomplete="off">
+      </div>
+      <button class="btn primary" id="auth-signin-btn" style="width:100%; justify-content:center;">🔒 <span class="en">Sign In &amp; Verify</span><span class="hi">साइन इन करें और सत्यापित करें</span></button>
+      <div class="auth-demo-note"><span class="en">Prototype demo — verified sample IDs:</span><span class="hi">प्रोटोटाइप डेमो — सत्यापित नमूना आईडी:</span> <b style="color:var(--text-dim);">GOJ-1001, GOJ-1002, GOJ-1003, GOJ-1004, GOJ-1005</b>. <span class="en">In production this would check against the Jharkhand government personnel directory.</span><span class="hi">उत्पादन में यह झारखंड सरकार की कार्मिक निर्देशिका के विरुद्ध जांचा जाएगा।</span></div>
+    </div>
+
+    <div id="auth-form-public" class="auth-form-panel" style="display:none;">
+      <h2><span class="en">Public Viewer Sign-In</span><span class="hi">सार्वजनिक दर्शक साइन-इन</span></h2>
+      <p class="note"><span class="en">Free access for the public to monitor mine-water quality status near them. Sign in with your Indian mobile number — view-only access; treatment controls remain restricted to authorized personnel.</span><span class="hi">आस-पास खनन जल गुणवत्ता स्थिति देखने हेतु जनता के लिए निःशुल्क पहुंच। अपने भारतीय मोबाइल नंबर से साइन इन करें — केवल देखने की अनुमति; उपचार नियंत्रण अधिकृत कर्मियों तक सीमित रहेगा।</span></p>
+      <div class="auth-field">
+        <label><span class="en">Mobile Number</span><span class="hi">मोबाइल नंबर</span></label>
+        <div class="phone-input-row">
+          <span class="phone-prefix">+91</span>
+          <input type="tel" id="auth-phone-input" placeholder="98765 43210" maxlength="10" autocomplete="off" inputmode="numeric">
+        </div>
+      </div>
+      <button class="btn primary" id="auth-public-signin-btn" style="width:100%; justify-content:center;">🔐 <span class="en">Sign In as Public Viewer</span><span class="hi">सार्वजनिक दर्शक के रूप में साइन इन करें</span></button>
+      <div class="auth-demo-note"><span class="en">Prototype demo — any valid-format 10-digit Indian mobile number (starting 6-9) is accepted instantly, no OTP. In production this would send a real OTP for verification.</span><span class="hi">प्रोटोटाइप डेमो — कोई भी मान्य 10-अंकीय भारतीय मोबाइल नंबर (6-9 से शुरू) तुरंत स्वीकार किया जाता है, कोई OTP नहीं। उत्पादन में सत्यापन हेतु वास्तविक OTP भेजा जाएगा।</span></div>
+    </div>
+
+
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<div id="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">AQ</div>
+      <div class="brand-text">
+        <div class="name">AQUASENSE MINE</div>
+        <div class="sub">Water Quality &amp; Treatment System</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" data-screen="home"><span class="ic">⌂</span><span class="en">Home</span><span class="hi">होम</span></button>
+      <button class="nav-item" data-screen="live"><span class="ic">●</span><span class="en">Live Monitoring</span><span class="hi">लाइव निगरानी</span></button>
+      <button class="nav-item" data-screen="history"><span class="ic">∿</span><span class="en">History</span><span class="hi">इतिहास</span></button>
+      <button class="nav-item" data-screen="alerts"><span class="ic">⚠</span><span class="en">Alerts</span><span class="hi">चेतावनी</span><span class="nb" id="nav-alert-badge" style="display: inline-block;">4</span></button>
+      <div class="nav-divider"></div>
+      <div class="nav-label"><span class="en">Treatment</span><span class="hi">उपचार</span></div>
+      <button class="nav-item" data-screen="recommend"><span class="ic">⚖</span><span class="en">Recommendations</span><span class="hi">सिफारिशें</span></button>
+      <button class="nav-item" data-screen="purification"><span class="ic">↯</span><span class="en">Purification</span><span class="hi">शुद्धिकरण</span></button>
+      <button class="nav-item" data-screen="verification"><span class="ic">✓</span><span class="en">Verification</span><span class="hi">सत्यापन</span></button>
+      <div class="nav-divider"></div>
+      <button class="nav-item" data-screen="stations"><span class="ic">☉</span><span class="en">Stations</span><span class="hi">केंद्र</span></button>
+    </nav>
+    <div class="sidebar-foot">
+      <div id="sfoot-station"><b>WS-JHR</b> · Jharia Coalfield</div>
+      <div id="sfoot-status">CRITICAL · LIVE</div>
+      <div class="auth-signed-badge"><span id="sfoot-auth">Signed in: —</span><button id="btn-sign-out">Sign Out</button></div>
+    </div>
+  </aside>
+
+  <div class="main" id="main-content">
+    <div class="topbar">
+      <div>
+        <h1 id="topbar-title">Home</h1>
+        <div class="desc" id="topbar-desc">System overview and live status</div>
+      </div>
+      <div class="topbar-right">
+        <select class="station-select" id="station-select"><option value="JHR">WS-JHR — Jharia Coalfield</option><option value="BOK">WS-BOK — Bokaro Coalfield</option><option value="NOA">WS-NOA — Noamundi &amp; Kiriburu</option><option value="GHA">WS-GHA — Ghatsila (Mosabani / Surda)</option><option value="JAD">WS-JAD — Jaduguda</option></select>
+        <span id="global-status-pill" class="pill critical"><span class="dot"></span>CRITICAL</span>
+        <button class="btn" id="theme-toggle">☽ Light Mode</button>
+        <button class="btn" id="sim-toggle">❙❙ Pause Feed</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- HOME -->
+      <section class="screen active" id="screen-home">
+        <div class="flow-ribbon">
+          <div class="flow-ribbon-title">Raw Water → Sensor Monitoring → Problem Detection → Govt/Admin Alert → AI Treatment Recommendation → Treatment Options → Treatment → Post-Treatment Check → Safe/Re-treat/Escalate → Reuse or Safe Discharge</div>
+          <div class="flow-track" id="flow-track"><div class="flow-stage lit"><div class="flow-line"></div><div class="flow-node">1</div><div class="flow-lbl">Raw Water</div></div><div class="flow-stage lit"><div class="flow-line"></div><div class="flow-node">2</div><div class="flow-lbl">Sensor Monitoring</div></div><div class="flow-stage lit"><div class="flow-line"></div><div class="flow-node">3</div><div class="flow-lbl">Problem Detection</div></div><div class="flow-stage lit"><div class="flow-line"></div><div class="flow-node">4</div><div class="flow-lbl">Govt/Admin Alert</div></div><div class="flow-stage "><div class="flow-line"></div><div class="flow-node">5</div><div class="flow-lbl">AI Treatment Recommendation</div></div><div class="flow-stage "><div class="flow-line"></div><div class="flow-node">6</div><div class="flow-lbl">Treatment Options</div></div><div class="flow-stage "><div class="flow-line"></div><div class="flow-node">7</div><div class="flow-lbl">Treatment Execution</div></div><div class="flow-stage "><div class="flow-line"></div><div class="flow-node">8</div><div class="flow-lbl">Post-Treatment Check</div></div><div class="flow-stage "><div class="flow-line"></div><div class="flow-node">9</div><div class="flow-lbl">Safe / Re-treat / Escalate</div></div><div class="flow-stage "><div class="flow-line"></div><div class="flow-node">10</div><div class="flow-lbl">Reuse or Safe Discharge</div></div></div>
+        </div>
+        <div class="grid cols-4" id="home-reading-cards">
+    <div class="card reading-card status-critical">
+      <div class="badge"></div>
+      <div class="param-name">pH</div>
+      <div class="param-value">4.16<span class="unit"></span></div>
+      <div class="param-range">normal 6.5–8.5</div>
+      <div class="sev-tag">CRITICAL</div>
+    </div>
+    <div class="card reading-card status-critical">
+      <div class="badge"></div>
+      <div class="param-name">Turbidity</div>
+      <div class="param-value">362.8<span class="unit">NTU</span></div>
+      <div class="param-range">normal 0–1NTU</div>
+      <div class="sev-tag">CRITICAL</div>
+    </div>
+    <div class="card reading-card status-high">
+      <div class="badge"></div>
+      <div class="param-name">TDS/EC</div>
+      <div class="param-value">1737<span class="unit">mg/L</span></div>
+      <div class="param-range">normal 0–500mg/L</div>
+      <div class="sev-tag">HIGH</div>
+    </div>
+    <div class="card reading-card status-medium">
+      <div class="badge"></div>
+      <div class="param-name">Temperature</div>
+      <div class="param-value">34.9<span class="unit">°C</span></div>
+      <div class="param-range">normal 15–32°C</div>
+      <div class="sev-tag">MEDIUM</div>
+    </div></div>
+        <div class="grid cols-3" style="margin-top:16px;">
+          <div class="card">
+            <div class="card-title">Station Health</div>
+            <div id="home-station-health">
+    <div class="vparam"><span class="lbl">Station</span><span class="strong" style="color:var(--text)">WS-JHR — Jharia Coalfield</span></div>
+    <div class="vparam"><span class="lbl">Data health</span><span class="pill normal"><span class="dot"></span>NORMAL</span></div>
+    <div class="vparam"><span class="lbl">Last reading</span><span>05:37:57 PM</span></div>
+    <div class="vparam"><span class="lbl">Readings stored</span><span>80</span></div>
+  </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Recent Alerts <span class="tag" id="home-alert-count">4</span></div>
+            <div id="home-recent-alerts" class="row-list">
+    <div class="alert-row sev-medium ">
+      <div class="a-main">
+        <div class="a-msg">Thermal Anomaly (Elevated) detected — Temperature MEDIUM</div>
+        <div class="a-meta">WS-JHR · temperature_c = 35.2 (ref. 15–32°C) · 05:20:01 PM</div>
+        <div class="a-detail"><b>Possible cause:</b> Underground coal-seam fires (as at Jharia), local geothermal gradient, or heat rejected from active mining/processing operations.</div>
+        <div class="a-detail"><b>Environmental impact:</b> Lowers dissolved oxygen, accelerates scaling/chemical reaction rates, stresses aquatic organisms, and reduces downstream treatment efficiency.</div>
+        <div class="a-route">✉ Routed to: Mine Administration + Environmental Compliance Officer</div>
+      </div>
+      <button class="btn small ack-btn" data-id="AL1790596201485276">Acknowledge</button>
+    </div>
+    <div class="alert-row sev-high ">
+      <div class="a-main">
+        <div class="a-msg">Elevated Dissolved Solids / Salinity detected — TDS/EC HIGH</div>
+        <div class="a-meta">WS-JHR · tds_mg_l = 1796 (ref. 0–500mg/L) · 05:20:01 PM</div>
+        <div class="a-detail"><b>Possible cause:</b> Leaching of sulphates, chlorides and dissolved metals from exposed ore and waste rock, plus residual process chemicals.</div>
+        <div class="a-detail"><b>Environmental impact:</b> Degrades water for irrigation/drinking use, contributes to salinization of the receiving water body, and accelerates equipment corrosion.</div>
+        <div class="a-route">✉ Routed to: State Pollution Control Board + Mine Safety Officer</div>
+      </div>
+      <button class="btn small ack-btn" data-id="AL1790596201485769">Acknowledge</button>
+    </div>
+    <div class="alert-row sev-critical ">
+      <div class="a-main">
+        <div class="a-msg">Suspended Particulate Load detected — Turbidity CRITICAL</div>
+        <div class="a-meta">WS-JHR · turbidity_ntu = 362.9 (ref. 0–1NTU) · 05:20:01 PM</div>
+        <div class="a-detail"><b>Possible cause:</b> Coal fines, ore tailings ("red mud"), and excavation silt entering the water via runoff and process discharge.</div>
+        <div class="a-detail"><b>Environmental impact:</b> Blocks light penetration and smothers aquatic habitat, clogs downstream filtration/treatment equipment, and can carry adsorbed heavy metals.</div>
+        <div class="a-route">✉ Routed to: Central/State Pollution Control Board + District Mining Officer + Emergency Response Team</div>
+      </div>
+      <button class="btn small ack-btn" data-id="AL179059620148519">Acknowledge</button>
+    </div>
+    <div class="alert-row sev-critical ">
+      <div class="a-main">
+        <div class="a-msg">Acidic Water / Acid Mine Drainage (AMD) detected — pH CRITICAL</div>
+        <div class="a-meta">WS-JHR · ph = 4.23 (ref. 6.5–8.5) · 05:20:01 PM</div>
+        <div class="a-detail"><b>Possible cause:</b> Oxidation of pyrite (FeS₂) and other sulphide minerals exposed by mining activity, generating sulphuric acid that lowers pH.</div>
+        <div class="a-detail"><b>Environmental impact:</b> Corrodes infrastructure, mobilizes toxic heavy metals (Fe, Al, Mn), harms aquatic life, and depresses pH in the receiving water body.</div>
+        <div class="a-route">✉ Routed to: Central/State Pollution Control Board + District Mining Officer + Emergency Response Team</div>
+      </div>
+      <button class="btn small ack-btn" data-id="AL1790596201485797">Acknowledge</button>
+    </div></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Latest Cycle Verdict</div>
+            <div id="home-treatment-snapshot"><div class="empty">No treatment cycle run yet. Go to Purification →</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LIVE MONITORING -->
+      <section class="screen" id="screen-live">
+        <div class="section-head">
+          <div><h2>Live Monitoring</h2><p>pH · Turbidity · TDS/EC · Temperature with severity-graded status</p></div>
+          <div class="simbar">
+            <button class="btn" id="btn-anomaly">⚡ Simulate Contamination Spike</button>
+            <button class="btn" id="btn-offline">🔌 Toggle Station Offline</button>
+          </div>
+        </div>
+        <div class="grid cols-4" id="live-reading-cards">
+    <div class="card reading-card status-critical">
+      <div class="badge"></div>
+      <div class="param-name">pH</div>
+      <div class="param-value">4.16<span class="unit"></span></div>
+      <div class="param-range">normal 6.5–8.5</div>
+      <div class="sev-tag">CRITICAL</div>
+    </div>
+    <div class="card reading-card status-critical">
+      <div class="badge"></div>
+      <div class="param-name">Turbidity</div>
+      <div class="param-value">362.8<span class="unit">NTU</span></div>
+      <div class="param-range">normal 0–1NTU</div>
+      <div class="sev-tag">CRITICAL</div>
+    </div>
+    <div class="card reading-card status-high">
+      <div class="badge"></div>
+      <div class="param-name">TDS/EC</div>
+      <div class="param-value">1737<span class="unit">mg/L</span></div>
+      <div class="param-range">normal 0–500mg/L</div>
+      <div class="sev-tag">HIGH</div>
+    </div>
+    <div class="card reading-card status-medium">
+      <div class="badge"></div>
+      <div class="param-name">Temperature</div>
+      <div class="param-value">34.9<span class="unit">°C</span></div>
+      <div class="param-range">normal 15–32°C</div>
+      <div class="sev-tag">MEDIUM</div>
+    </div></div>
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">Latest Raw Payload (POST /api/readings)</div>
+          <pre id="live-payload" style="font-family:var(--font-mono); font-size:12px; color:var(--text-dim); overflow-x:auto; white-space:pre-wrap;">{
+  "station_id": "WS-JHR",
+  "timestamp": "2026-09-28T12:07:57.581Z",
+  "ph": 4.16,
+  "turbidity_ntu": 362.8,
+  "tds_mg_l": 1737,
+  "temperature_c": 34.9
+}</pre>
+        </div>
+      </section>
+
+      <!-- HISTORY -->
+      <section class="screen" id="screen-history">
+        <div class="section-head"><div><h2>History</h2><p>Rolling 20-point time-series trend per parameter (cubic interpolation)</p></div></div>
+        <div class="grid cols-2">
+          <div class="chart-wrap"><div class="card-title">pH</div><canvas id="chart-ph" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas></div>
+          <div class="chart-wrap"><div class="card-title">Turbidity (NTU)</div><canvas id="chart-turb" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas></div>
+          <div class="chart-wrap"><div class="card-title">TDS (mg/L)</div><canvas id="chart-tds" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas></div>
+          <div class="chart-wrap"><div class="card-title">Temperature (°C)</div><canvas id="chart-temp" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas></div>
+        </div>
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">Event Timeline</div>
+          <div id="history-timeline" class="row-list"><div class="alert-row sev-medium"><div class="a-main"><div class="a-msg">Thermal Anomaly (Elevated) detected — Temperature MEDIUM</div><div class="a-meta">05:20:01 PM</div></div></div><div class="alert-row sev-high"><div class="a-main"><div class="a-msg">Elevated Dissolved Solids / Salinity detected — TDS/EC HIGH</div><div class="a-meta">05:20:01 PM</div></div></div><div class="alert-row sev-critical"><div class="a-main"><div class="a-msg">Suspended Particulate Load detected — Turbidity CRITICAL</div><div class="a-meta">05:20:01 PM</div></div></div><div class="alert-row sev-critical"><div class="a-main"><div class="a-msg">Acidic Water / Acid Mine Drainage (AMD) detected — pH CRITICAL</div><div class="a-meta">05:20:01 PM</div></div></div></div>
+        </div>
+      </section>
+
+      <!-- ALERTS -->
+      <section class="screen" id="screen-alerts">
+        <div class="section-head">
+          <div><h2>Alerts</h2><p>Problem detection, severity, cause, environmental impact and government/admin routing</p></div>
+          <button class="btn small" id="btn-clear-acked">Clear Acknowledged</button>
+        </div>
+        <div class="card"><div id="alerts-list" class="row-list">
+    <div class="alert-row sev-medium ">
+      <div class="a-main">
+        <div class="a-msg">Thermal Anomaly (Elevated) detected — Temperature MEDIUM</div>
+        <div class="a-meta">WS-JHR · temperature_c = 35.2 (ref. 15–32°C) · 05:20:01 PM</div>
+        <div class="a-detail"><b>Possible cause:</b> Underground coal-seam fires (as at Jharia), local geothermal gradient, or heat rejected from active mining/processing operations.</div>
+        <div class="a-detail"><b>Environmental impact:</b> Lowers dissolved oxygen, accelerates scaling/chemical reaction rates, stresses aquatic organisms, and reduces downstream treatment efficiency.</div>
+        <div class="a-route">✉ Routed to: Mine Administration + Environmental Compliance Officer</div>
+      </div>
+      <button class="btn small ack-btn" data-id="AL1790596201485276">Acknowledge</button>
+    </div>
+    <div class="alert-row sev-high ">
+      <div class="a-main">
+        <div class="a-msg">Elevated Dissolved Solids / Salinity detected — TDS/EC HIGH</div>
+        <div class="a-meta">WS-JHR · tds_mg_l = 1796 (ref. 0–500mg/L) · 05:20:01 PM</div>
+        <div class="a-detail"><b>Possible cause:</b> Leaching of sulphates, chlorides and dissolved metals from exposed ore and waste rock, plus residual process chemicals.</div>
+        <div class="a-detail"><b>Environmental impact:</b> Degrades water for irrigation/drinking use, contributes to salinization of the receiving water body, and accelerates equipment corrosion.</div>
+        <div class="a-route">✉ Routed to: State Pollution Control Board + Mine Safety Officer</div>
+      </div>
+      <button class="btn small ack-btn" data-id="AL1790596201485769">Acknowledge</button>
+    </div>
+    <div class="alert-row sev-critical ">
+      <div class="a-main">
+        <div class="a-msg">Suspended Particulate Load detected — Turbidity CRITICAL</div>
+        <div class="a-meta">WS-JHR · turbidity_ntu = 362.9 (ref. 0–1NTU) · 05:20:01 PM</div>
+        <div class="a-detail"><b>Possible cause:</b> Coal fines, ore tailings ("red mud"), and excavation silt entering the water via runoff and process discharge.</div>
+        <div class="a-detail"><b>Environmental impact:</b> Blocks light penetration and smothers aquatic habitat, clogs downstream filtration/treatment equipment, and can carry adsorbed heavy metals.</div>
+        <div class="a-route">✉ Routed to: Central/State Pollution Control Board + District Mining Officer + Emergency Response Team</div>
+      </div>
+      <button class="btn small ack-btn" data-id="AL179059620148519">Acknowledge</button>
+    </div>
+    <div class="alert-row sev-critical ">
+      <div class="a-main">
+        <div class="a-msg">Acidic Water / Acid Mine Drainage (AMD) detected — pH CRITICAL</div>
+        <div class="a-meta">WS-JHR · ph = 4.23 (ref. 6.5–8.5) · 05:20:01 PM</div>
+        <div class="a-detail"><b>Possible cause:</b> Oxidation of pyrite (FeS₂) and other sulphide minerals exposed by mining activity, generating sulphuric acid that lowers pH.</div>
+        <div class="a-detail"><b>Environmental impact:</b> Corrodes infrastructure, mobilizes toxic heavy metals (Fe, Al, Mn), harms aquatic life, and depresses pH in the receiving water body.</div>
+        <div class="a-route">✉ Routed to: Central/State Pollution Control Board + District Mining Officer + Emergency Response Team</div>
+      </div>
+      <button class="btn small ack-btn" data-id="AL1790596201485797">Acknowledge</button>
+    </div></div></div>
+      </section>
+
+      <!-- TREATMENT RECOMMENDATIONS -->
+      <section class="screen" id="screen-recommend">
+        <div class="section-head">
+          <div><h2>AI Treatment Recommendation Engine</h2><p>Parameter-specific problem detection with Traditional / Advanced treatment options</p></div>
+        </div>
+        <div class="banner" id="recommend-station-banner"><b>WS-JHR — Jharia Coalfield</b> (23.74° N, 86.41° E) · Primary issue &amp; target stage: Acid mine drainage, sulfuric acid, coal fines, thermal energy extraction.</div>
+        <div id="recommend-list">
+    <div class="problem-block">
+      <div class="problem-head">
+        <div>
+          <div class="p-name">Acidic Water / Acid Mine Drainage (AMD)</div>
+          <div class="p-param">pH · Station WS-JHR</div>
+        </div>
+        <span class="pill critical"><span class="dot"></span>CRITICAL</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-facts">
+          <div class="pf"><div class="pf-lbl">Current Value</div><div class="pf-val">4.16</div></div>
+          <div class="pf"><div class="pf-lbl">Normal / Target Range</div><div class="pf-val">6.5–8.5</div></div>
+          <div class="pf"><div class="pf-lbl">Severity</div><div class="pf-val">CRITICAL</div></div>
+          <div class="pf"><div class="pf-lbl">Active Treatment Tier</div><div class="pf-val">Traditional</div></div>
+        </div>
+        <div class="cause-impact">
+          <div class="ci-box"><div class="ci-lbl">Possible Cause</div><p>Oxidation of pyrite (FeS₂) and other sulphide minerals exposed by mining activity, generating sulphuric acid that lowers pH.</p></div>
+          <div class="ci-box"><div class="ci-lbl">Potential Environmental Impact</div><p>Corrodes infrastructure, mobilizes toxic heavy metals (Fe, Al, Mn), harms aquatic life, and depresses pH in the receiving water body.</p></div>
+        </div>
+        <div class="route-banner">✉ Government / Admin routing: Central/State Pollution Control Board + District Mining Officer + Emergency Response Team</div>
+        <div class="kb-grid">
+          
+    <div class="kb-card selected">
+      <span class="kb-tier trad">Traditional</span>
+      <div class="kb-title">Lime / Limestone Neutralization</div>
+      
+      <div class="kb-sub">Equipment / Material</div><ul class="kb-list plain"><li>Hydrated lime Ca(OH)₂ or crushed limestone CaCO₃</li><li>Slurry mixing/dosing tank</li><li>In-line pH probe + controller</li><li>Metering dosing pump</li><li>Reaction/retention basin</li></ul><div class="kb-sub">Step-by-Step Procedure</div><ul class="kb-list steps"><li>Continuously measure inlet pH with an in-line probe.</li><li>Meter lime/limestone slurry into the reaction tank proportional to acidity load.</li><li>Mix for 15–30 min retention time to allow neutralization to complete.</li><li>Let precipitated metal hydroxides (Fe, Al, Mn) settle in a clarifier.</li><li>Re-check pH before discharge/reuse; trim dosing if still out of range.</li></ul><div class="kb-sub">Advantages</div><ul class="kb-list plain"><li>Low capital cost, simple to operate</li><li>Fast-acting on strongly acidic water</li><li>Reagents widely available</li></ul><div class="kb-sub">Limitations</div><ul class="kb-list plain"><li>Generates metal-hydroxide sludge requiring disposal</li><li>Prone to overshoot without tight control</li><li>Ongoing reagent cost scales with acidity load</li></ul>
+      <div class="kb-foot">
+        <button class="btn small kb-select-btn primary" data-param="ph" data-mode="traditional">✓ Selected for Treatment</button>
+      </div>
+    </div>
+          
+    <div class="kb-card ">
+      <span class="kb-tier intl">Advanced / International</span>
+      <div class="kb-title">Anoxic Limestone Drain (ALD) + Constructed Wetland</div>
+      <div class="kb-ref">🌐 Passive AMD treatment used across Appalachian coalfields (USA) and at abandoned coal sites in the UK (Coal Authority mine-water schemes).</div>
+      <div class="kb-sub">Equipment / Material</div><ul class="kb-list plain"><li>Buried limestone gravel drain (sealed from atmospheric O₂)</li><li>Constructed wetland cells (aerobic + anaerobic)</li><li>Settling/polishing pond</li></ul><div class="kb-sub">Step-by-Step Procedure</div><ul class="kb-list steps"><li>Route acidic water through a sealed limestone bed before it meets oxygen, preventing iron-precipitate armoring of the limestone.</li><li>Discharge into a constructed wetland where metals oxidize and settle as the water re-aerates.</li><li>Anaerobic wetland cells with organic substrate host sulphate-reducing bacteria that further raise pH and precipitate metal sulphides.</li><li>Water exits through a polishing pond before discharge/reuse.</li></ul><div class="kb-sub">Expected Benefits</div><ul class="kb-list plain"><li>No chemical dosing or electricity — passive, gravity-fed</li><li>Very low ongoing operating cost and supervision</li><li>Wetland habitat as an ecological co-benefit</li></ul><div class="kb-sub">Energy / Chemical Requirement</div><p style="font-size:11.5px; color:var(--text-dim); line-height:1.5;">Near-zero — passive gravity flow; limestone charge replaced only every several years.</p><div class="kb-sub">Advantage Over Traditional</div><ul class="kb-list plain"><li>No sludge handling at the point of treatment</li><li>Far lower long-term operating cost</li><li>No risk of chemical overshoot</li></ul>
+      <div class="kb-foot">
+        <button class="btn small kb-select-btn " data-param="ph" data-mode="international">Select This Method</button>
+      </div>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="problem-block">
+      <div class="problem-head">
+        <div>
+          <div class="p-name">Suspended Particulate Load</div>
+          <div class="p-param">Turbidity · Station WS-JHR</div>
+        </div>
+        <span class="pill critical"><span class="dot"></span>CRITICAL</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-facts">
+          <div class="pf"><div class="pf-lbl">Current Value</div><div class="pf-val">362.8NTU</div></div>
+          <div class="pf"><div class="pf-lbl">Normal / Target Range</div><div class="pf-val">0–1NTU</div></div>
+          <div class="pf"><div class="pf-lbl">Severity</div><div class="pf-val">CRITICAL</div></div>
+          <div class="pf"><div class="pf-lbl">Active Treatment Tier</div><div class="pf-val">Traditional</div></div>
+        </div>
+        <div class="cause-impact">
+          <div class="ci-box"><div class="ci-lbl">Possible Cause</div><p>Coal fines, ore tailings ("red mud"), and excavation silt entering the water via runoff and process discharge.</p></div>
+          <div class="ci-box"><div class="ci-lbl">Potential Environmental Impact</div><p>Blocks light penetration and smothers aquatic habitat, clogs downstream filtration/treatment equipment, and can carry adsorbed heavy metals.</p></div>
+        </div>
+        <div class="route-banner">✉ Government / Admin routing: Central/State Pollution Control Board + District Mining Officer + Emergency Response Team</div>
+        <div class="kb-grid">
+          
+    <div class="kb-card selected">
+      <span class="kb-tier trad">Traditional</span>
+      <div class="kb-title">Sedimentation + Coagulant-Assisted Sand Filtration</div>
+      
+      <div class="kb-sub">Equipment / Material</div><ul class="kb-list plain"><li>Coagulant dosing system (alum / polyaluminium chloride)</li><li>Flocculation tank</li><li>Sedimentation clarifier</li><li>Multi-media sand/dual-media filter</li></ul><div class="kb-sub">Step-by-Step Procedure</div><ul class="kb-list steps"><li>Dose coagulant (alum or PAC) to destabilize suspended coal/ore particles.</li><li>Slow-mix in a flocculation tank to grow settleable flocs.</li><li>Allow flocs to settle in a sedimentation clarifier.</li><li>Pass clarified water through a multi-media sand filter to remove residual fines.</li><li>Backwash the filter periodically to restore capacity.</li></ul><div class="kb-sub">Advantages</div><ul class="kb-list plain"><li>Proven, low-tech, easy to operate and maintain</li><li>Handles moderate turbidity loads well</li><li>Low equipment cost</li></ul><div class="kb-sub">Limitations</div><ul class="kb-list plain"><li>Struggles with extreme "red mud"-type loads (&gt;400 NTU)</li><li>Coagulant sludge requires disposal</li><li>Backwash water needs further handling</li></ul>
+      <div class="kb-foot">
+        <button class="btn small kb-select-btn primary" data-param="turbidity_ntu" data-mode="traditional">✓ Selected for Treatment</button>
+      </div>
+    </div>
+          
+    <div class="kb-card ">
+      <span class="kb-tier intl">Advanced / International</span>
+      <div class="kb-title">Electrocoagulation (Fe/Al Electrodes) + Ceramic Micro/Ultrafiltration</div>
+      <div class="kb-ref">🌐 Electrocoagulation is used at mine tailings-water facilities in Australia and Canada; ceramic UF is established in industrial water-reuse plants in Japan and the EU.</div>
+      <div class="kb-sub">Equipment / Material</div><ul class="kb-list plain"><li>Electrocoagulation cell (sacrificial Fe/Al electrode plates, DC supply)</li><li>Flotation/settling stage for coagulated floc</li><li>Ceramic micro/ultrafiltration membrane skid</li></ul><div class="kb-sub">Step-by-Step Procedure</div><ul class="kb-list steps"><li>Pass water through an electrocoagulation cell; applied current dissolves Fe/Al electrodes in situ, generating coagulant without bulk chemical storage.</li><li>Fine electrolysis gas bubbles float coagulated particles for easy removal (electroflotation).</li><li>Polish the effluent through ceramic micro/ultrafiltration to reach sub-0.1 NTU permeate.</li><li>Periodically air-scour/backwash the membranes to maintain flux.</li></ul><div class="kb-sub">Expected Benefits</div><ul class="kb-list plain"><li>Achieves permeate turbidity below 0.1 NTU</li><li>No bulk chemical storage/handling on site</li><li>Compact footprint versus conventional clarifiers</li></ul><div class="kb-sub">Energy / Chemical Requirement</div><p style="font-size:11.5px; color:var(--text-dim); line-height:1.5;">Electrical only, typically 0.5–2 kWh/m³ depending on particle load; electrodes are consumed and replaced periodically.</p><div class="kb-sub">Advantage Over Traditional</div><ul class="kb-list plain"><li>Far higher, more consistent removal on extreme loads</li><li>No liquid coagulant supply chain</li><li>Smaller physical footprint</li></ul>
+      <div class="kb-foot">
+        <button class="btn small kb-select-btn " data-param="turbidity_ntu" data-mode="international">Select This Method</button>
+      </div>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="problem-block">
+      <div class="problem-head">
+        <div>
+          <div class="p-name">Elevated Dissolved Solids / Salinity</div>
+          <div class="p-param">TDS/EC · Station WS-JHR</div>
+        </div>
+        <span class="pill high"><span class="dot"></span>HIGH</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-facts">
+          <div class="pf"><div class="pf-lbl">Current Value</div><div class="pf-val">1737mg/L</div></div>
+          <div class="pf"><div class="pf-lbl">Normal / Target Range</div><div class="pf-val">0–500mg/L</div></div>
+          <div class="pf"><div class="pf-lbl">Severity</div><div class="pf-val">HIGH</div></div>
+          <div class="pf"><div class="pf-lbl">Active Treatment Tier</div><div class="pf-val">Traditional</div></div>
+        </div>
+        <div class="cause-impact">
+          <div class="ci-box"><div class="ci-lbl">Possible Cause</div><p>Leaching of sulphates, chlorides and dissolved metals from exposed ore and waste rock, plus residual process chemicals.</p></div>
+          <div class="ci-box"><div class="ci-lbl">Potential Environmental Impact</div><p>Degrades water for irrigation/drinking use, contributes to salinization of the receiving water body, and accelerates equipment corrosion.</p></div>
+        </div>
+        <div class="route-banner">✉ Government / Admin routing: State Pollution Control Board + Mine Safety Officer</div>
+        <div class="kb-grid">
+          
+    <div class="kb-card selected">
+      <span class="kb-tier trad">Traditional</span>
+      <div class="kb-title">Dilution / Conventional Coagulation-Settling</div>
+      
+      <div class="kb-sub">Equipment / Material</div><ul class="kb-list plain"><li>Dilution/blending tank (where a lower-TDS source exists)</li><li>Coagulant dosing (co-precipitates some dissolved metals)</li><li>Settling basin</li></ul><div class="kb-sub">Step-by-Step Procedure</div><ul class="kb-list steps"><li>Blend high-TDS water with a lower-TDS source where available.</li><li>Dose coagulant to co-precipitate a portion of dissolved metals with suspended solids.</li><li>Settle and decant.</li><li>Re-check TDS/EC — true dissolved salts (sulphates, chlorides) remain largely unaffected.</li></ul><div class="kb-sub">Advantages</div><ul class="kb-list plain"><li>Very low cost where a dilution source exists</li><li>Simple to add to existing sedimentation infrastructure</li></ul><div class="kb-sub">Limitations</div><ul class="kb-list plain"><li>Does not remove dissolved salts, only dilutes them</li><li>Ineffective alone for sulphate-heavy AMD or process-salt water</li><li>Requires a secondary water source, not always available</li></ul>
+      <div class="kb-foot">
+        <button class="btn small kb-select-btn primary" data-param="tds_mg_l" data-mode="traditional">✓ Selected for Treatment</button>
+      </div>
+    </div>
+          
+    <div class="kb-card ">
+      <span class="kb-tier intl">Advanced / International</span>
+      <div class="kb-title">Multi-Stage Reverse Osmosis (UF Pre-treatment + RO)</div>
+      <div class="kb-ref">🌐 Used for coal-seam-gas produced-water treatment in Australia and AMD reclamation projects in South Africa.</div>
+      <div class="kb-sub">Equipment / Material</div><ul class="kb-list plain"><li>Ultrafiltration pre-treatment skid</li><li>High-pressure RO pump</li><li>Multi-stage RO membrane array</li><li>Concentrate/brine management line</li></ul><div class="kb-sub">Step-by-Step Procedure</div><ul class="kb-list steps"><li>Pre-treat with ultrafiltration to protect RO membranes from fouling.</li><li>Pressurize and pass water through RO membranes; permeate exits as low-TDS clean water.</li><li>Route the concentrated reject/brine stream to a separate management step.</li><li>Monitor membrane differential pressure and periodically clean-in-place (CIP) to control fouling/scaling.</li></ul><div class="kb-sub">Expected Benefits</div><ul class="kb-list plain"><li>Removes 90%+ of dissolved salts including sulphates and most dissolved metals</li><li>Produces a reusable-quality permeate stream</li><li>Commercially mature, well-proven technology</li></ul><div class="kb-sub">Energy / Chemical Requirement</div><p style="font-size:11.5px; color:var(--text-dim); line-height:1.5;">Energy-intensive, typically 1–3 kWh/m³ depending on feed TDS and pressure; needs periodic antiscalant and CIP chemicals.</p><div class="kb-sub">Advantage Over Traditional</div><ul class="kb-list plain"><li>Actually removes dissolved salts rather than diluting them</li><li>Defined permeate quality suitable for reuse</li><li>Scales to continuous, unattended operation</li></ul>
+      <div class="kb-foot">
+        <button class="btn small kb-select-btn " data-param="tds_mg_l" data-mode="international">Select This Method</button>
+      </div>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="problem-block">
+      <div class="problem-head">
+        <div>
+          <div class="p-name">Thermal Anomaly (Elevated)</div>
+          <div class="p-param">Temperature · Station WS-JHR</div>
+        </div>
+        <span class="pill medium"><span class="dot"></span>MEDIUM</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-facts">
+          <div class="pf"><div class="pf-lbl">Current Value</div><div class="pf-val">34.9°C</div></div>
+          <div class="pf"><div class="pf-lbl">Normal / Target Range</div><div class="pf-val">15–32°C</div></div>
+          <div class="pf"><div class="pf-lbl">Severity</div><div class="pf-val">MEDIUM</div></div>
+          <div class="pf"><div class="pf-lbl">Active Treatment Tier</div><div class="pf-val">Traditional</div></div>
+        </div>
+        <div class="cause-impact">
+          <div class="ci-box"><div class="ci-lbl">Possible Cause</div><p>Underground coal-seam fires (as at Jharia), local geothermal gradient, or heat rejected from active mining/processing operations.</p></div>
+          <div class="ci-box"><div class="ci-lbl">Potential Environmental Impact</div><p>Lowers dissolved oxygen, accelerates scaling/chemical reaction rates, stresses aquatic organisms, and reduces downstream treatment efficiency.</p></div>
+        </div>
+        <div class="route-banner">✉ Government / Admin routing: Mine Administration + Environmental Compliance Officer</div>
+        <div class="kb-grid">
+          
+    <div class="kb-card selected">
+      <span class="kb-tier trad">Traditional</span>
+      <div class="kb-title">Passive Heat Dissipation / Cooling Ponds</div>
+      
+      <div class="kb-sub">Equipment / Material</div><ul class="kb-list plain"><li>Cooling pond or cascade aerator</li><li>Temperature sensor with boundary alarm</li></ul><div class="kb-sub">Step-by-Step Procedure</div><ul class="kb-list steps"><li>Route water through a cooling pond or cascade structure to lose heat to ambient air.</li><li>Continuously monitor discharge temperature against the permitted boundary.</li><li>Trigger a boundary alarm if temperature remains outside range after passive cooling.</li></ul><div class="kb-sub">Advantages</div><ul class="kb-list plain"><li>No equipment cost beyond a pond/structure</li><li>No energy input required</li></ul><div class="kb-sub">Limitations</div><ul class="kb-list plain"><li>Slow and weather-dependent, large land footprint</li><li>No value recovered from the thermal energy — it is simply dissipated</li></ul>
+      <div class="kb-foot">
+        <button class="btn small kb-select-btn primary" data-param="temperature_c" data-mode="traditional">✓ Selected for Treatment</button>
+      </div>
+    </div>
+          
+    <div class="kb-card ">
+      <span class="kb-tier intl">Advanced / International</span>
+      <div class="kb-title">Mine-Water Heat Recovery via Heat Exchanger</div>
+      <div class="kb-ref">🌐 Operating examples include the Heerlen minewater geothermal network (Netherlands) and UK Coal Authority mine-water heat schemes at Gateshead and Seaham.</div>
+      <div class="kb-sub">Equipment / Material</div><ul class="kb-list plain"><li>Plate or shell-and-tube heat exchanger</li><li>Secondary heating/cooling distribution loop</li><li>Circulation pumps</li></ul><div class="kb-sub">Step-by-Step Procedure</div><ul class="kb-list steps"><li>Pass warm mine water through one side of a heat exchanger.</li><li>Transfer heat to a clean secondary loop feeding a district heating network, greenhouse, or building HVAC.</li><li>Return the now-cooled mine water to the treatment/discharge line.</li><li>Monitor exchanger performance and clean periodically to prevent scaling/fouling losses.</li></ul><div class="kb-sub">Expected Benefits</div><ul class="kb-list plain"><li>Recovers usable thermal energy instead of wasting it</li><li>Corrects the discharge-temperature excursion as a side effect</li><li>Can offset heating/cooling costs for nearby facilities</li></ul><div class="kb-sub">Energy / Chemical Requirement</div><p style="font-size:11.5px; color:var(--text-dim); line-height:1.5;">Circulation-pump power only, no chemicals; net energy-positive when nearby heat demand exists.</p><div class="kb-sub">Advantage Over Traditional</div><ul class="kb-list plain"><li>Turns a compliance problem into an energy asset</li><li>Faster, more controllable correction than passive ponds</li></ul>
+      <div class="kb-foot">
+        <button class="btn small kb-select-btn " data-param="temperature_c" data-mode="international">Select This Method</button>
+      </div>
+    </div>
+        </div>
+      </div>
+    </div></div>
+      </section>
+
+      <!-- PURIFICATION -->
+      <section class="screen" id="screen-purification">
+        <div class="section-head">
+          <div><h2>Treatment Execution</h2><p>Lime/ALD → Electrocoagulation/Ceramic UF → Smart RO → Geothermal Heat Recovery, using the currently selected tier per parameter</p></div>
+          <button class="btn primary" id="btn-run-purification">▶ Run Treatment Cycle</button>
+        </div>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-title">Active Treatment Tiers <span class="tag">edit in Recommendations</span></div>
+          <div id="active-tiers-summary" class="row-list"><div class="vparam"><span class="lbl">pH</span><span>Traditional</span></div><div class="vparam"><span class="lbl">Turbidity</span><span>Traditional</span></div><div class="vparam"><span class="lbl">TDS/EC</span><span>Traditional</span></div><div class="vparam"><span class="lbl">Temperature</span><span>Traditional</span></div></div>
+        </div>
+        <div class="card" style="margin-bottom:16px;" id="purif-benchmark-card"><div class="card-title">Target Purified Benchmark — WS-JHR (IS 10500)</div>
+    <div class="stage-vals">
+      <div><span class="v-lbl">pH</span>7–7.4</div>
+      <div><span class="v-lbl">Turbidity</span>&lt; 1 NTU</div>
+      <div><span class="v-lbl">TDS</span>180–350 mg/L</div>
+      <div><span class="v-lbl">Temp</span>24–26°C</div>
+    </div></div>
+        <div class="stage-chain" id="stage-chain">
+    <div class="stage-item">
+      <div class="s-head"><div class="s-name"><span class="s-idx">01</span>Inlet — Raw Mine Water</div></div>
+      <div class="stage-vals">
+        <div><span class="v-lbl">pH</span>4.16</div>
+        <div><span class="v-lbl">Turbidity</span>362.8 NTU</div>
+        <div><span class="v-lbl">TDS</span>1737 mg/L</div>
+        <div><span class="v-lbl">Temp</span>34.9°C</div>
+      </div>
+      <div class="mode-note">Untreated inflow from the pit / drainage sump.</div>
+      
+    </div>
+    <div class="stage-item">
+      <div class="s-head"><div class="s-name"><span class="s-idx">02</span>pH Neutralizer — Lime Dosing</div></div>
+      <div class="stage-vals">
+        <div><span class="v-lbl">pH</span>6.24</div>
+        <div><span class="v-lbl">Turbidity</span>391.82 NTU</div>
+        <div><span class="v-lbl">TDS</span>1789 mg/L</div>
+        <div><span class="v-lbl">Temp</span>34.9°C</div>
+      </div>
+      <div class="mode-note">Lime slurry dosed — some precipitate turbidity added, minor chemical TDS increase.</div>
+      
+    </div>
+    <div class="stage-item">
+      <div class="s-head"><div class="s-name"><span class="s-idx">03</span>Sedimentation + Sand Filter</div></div>
+      <div class="stage-vals">
+        <div><span class="v-lbl">pH</span>6.24</div>
+        <div><span class="v-lbl">Turbidity</span>31.35 NTU</div>
+        <div><span class="v-lbl">TDS</span>1789 mg/L</div>
+        <div><span class="v-lbl">Temp</span>34.9°C</div>
+      </div>
+      <div class="mode-note">Sedimentation + multi-media sand filter — strong reduction, extreme loads leave residual NTU.</div>
+      
+    </div>
+    <div class="stage-item">
+      <div class="s-head"><div class="s-name"><span class="s-idx">04</span>Dilution / Coagulation</div><span class="stage-flag warn">INEFFECTIVE — HIGH TDS (dissolved salts not removed)</span></div>
+      <div class="stage-vals">
+        <div><span class="v-lbl">pH</span>6.24</div>
+        <div><span class="v-lbl">Turbidity</span>31.35 NTU</div>
+        <div><span class="v-lbl">TDS</span>1700 mg/L</div>
+        <div><span class="v-lbl">Temp</span>34.9°C</div>
+      </div>
+      <div class="mode-note">Dilution / conventional coagulation has little effect on dissolved solids.</div>
+      
+    </div>
+    <div class="stage-item">
+      <div class="s-head"><div class="s-name"><span class="s-idx">05</span>Passive Heat Dissipation</div></div>
+      <div class="stage-vals">
+        <div><span class="v-lbl">pH</span>6.24</div>
+        <div><span class="v-lbl">Turbidity</span>31.35 NTU</div>
+        <div><span class="v-lbl">TDS</span>1700 mg/L</div>
+        <div><span class="v-lbl">Temp</span>33.4°C</div>
+      </div>
+      <div class="mode-note">Passive heat dissipation toward ambient — boundary alarm only, no recovery.</div>
+      
+    <div class="kw-gauge">
+      <div class="kw-ring" style="--pct:0"><span>0</span></div>
+      <div class="kw-text">Geothermal Heat Energy Harvested<br><b>0 kW</b> at assumed 5 L/s flow, target discharge 22°C</div>
+    </div>
+    </div>
+    <div class="stage-item">
+      <div class="s-head"><div class="s-name"><span class="s-idx">06</span>Clean Permeate — Discharge</div></div>
+      <div class="stage-vals">
+        <div><span class="v-lbl">pH</span>6.24</div>
+        <div><span class="v-lbl">Turbidity</span>31.35 NTU</div>
+        <div><span class="v-lbl">TDS</span>1700 mg/L</div>
+        <div><span class="v-lbl">Temp</span>33.4°C</div>
+      </div>
+      <div class="mode-note">Final monitored discharge/reuse point.</div>
+      
+    </div></div>
+      </section>
+
+      <!-- VERIFICATION -->
+      <section class="screen" id="screen-verification">
+        <div class="section-head">
+          <div><h2>Post-Treatment Verification</h2><p>Secondary quality check — before vs after, treatment efficiency, SAFE / RE-TREAT / ESCALATE</p></div>
+        </div>
+        <div id="verdict-banner"><div class="verdict-banner"><div><div class="v-title">No Treatment Cycle Run Yet</div><div class="v-sub">Run a treatment cycle from the Purification screen to perform the secondary quality check.</div></div></div></div>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <div class="verify-compare">
+            <div class="verify-col"><h3>Raw Mine Water (Inlet)</h3><div id="verify-raw"><div class="vparam"><span class="lbl">pH</span><span>4.16 <span class="delta flat">raw 3.8–4.8</span></span></div><div class="vparam"><span class="lbl">Turbidity</span><span>362.8NTU <span class="delta flat">raw 280–450NTU</span></span></div><div class="vparam"><span class="lbl">TDS/EC</span><span>1737mg/L <span class="delta flat">raw 1400–2200mg/L</span></span></div><div class="vparam"><span class="lbl">Temperature</span><span>34.9°C <span class="delta flat">raw 32–38°C</span></span></div><div class="vparam"><span class="lbl">Geothermal kW</span><span>—</span></div></div></div>
+            <div class="verify-arrow">→</div>
+            <div class="verify-col"><h3>Treated Water (Latest Cycle)</h3><div id="verify-treated"><div class="vparam"><span class="lbl">pH</span><span>4.16 <span class="delta bad">misses benchmark 7–7.4</span></span></div><div class="vparam"><span class="lbl">Turbidity</span><span>362.8NTU <span class="delta bad">misses benchmark &lt; 1 NTU</span></span></div><div class="vparam"><span class="lbl">TDS/EC</span><span>1737mg/L <span class="delta bad">misses benchmark 180–350 mg/L</span></span></div><div class="vparam"><span class="lbl">Temperature</span><span>34.9°C <span class="delta bad">misses benchmark 24–26°C</span></span></div><div class="vparam"><span class="lbl">Geothermal kW</span><span>0 kW <span class="delta good">recovered</span></span></div></div></div>
+          </div>
+        </div>
+        <div class="banner" style="margin-top:16px;">
+          System note: these readings confirm the monitored parameters changed through treatment. They do <b>not</b> certify microbiological safety or specific heavy-metal/radionuclide removal — that requires laboratory / validated testing per IS 10500.
+        </div>
+        <div class="card">
+          <div class="card-title">Treatment Cycle Log</div>
+          <table id="verify-log-table">
+            <thead><tr><th>Cycle</th><th>Time</th><th>Turbidity In→Out</th><th>TDS In→Out</th><th>pH In→Out</th><th>Efficiency</th><th>Verdict</th></tr></thead>
+            <tbody id="verify-log-body"><tr><td colspan="7" style="text-align:center; color:var(--text-dimmer);">No verification runs logged yet.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- STATIONS -->
+      <section class="screen" id="screen-stations">
+        <div class="section-head"><div><h2>Stations</h2><p>Jharkhand mining-hub monitoring registry — click a card or map marker to switch active station</p></div></div>
+        <div class="card map-card">
+          <div class="map-head">
+            <div class="card-title" style="margin-bottom:2px;">Mining Hub Locations — Jharkhand</div>
+            <p class="note" style="margin-bottom:0;">Green = purified/safe, Red = affected/contaminated. Click a marker to switch the active monitoring station.</p>
+          </div>
+          <div id="jharkhand-map"></div>
+          <div class="map-legend-row" id="map-legend"></div>
+        </div>
+        <div class="grid cols-2" id="stations-list"><div class="card station-card active-station" data-station="JHR" style="flex-direction:column; align-items:stretch; gap:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <div class="s-info">
+          <div class="s-name">WS-JHR — Jharia Coalfield</div>
+          <div class="s-loc">Dhanbad, Jharkhand · 23.74° N, 86.41° E</div>
+        </div>
+        <span class="pill normal"><span class="dot"></span>NORMAL</span>
+      </div>
+      <div class="cause-impact" style="margin-bottom:0;">
+        <div class="ci-box" style="background:var(--coral-glow); border:1px solid rgba(225,88,79,.25);">
+          <div class="ci-lbl" style="color:var(--coral);">🔴 Raw Mine Water — Unsafe</div>
+          <div class="s-range">pH 3.8–4.8 · Turb 280–450 NTU · TDS 1400–2200 mg/L · Temp 32–38°C</div>
+        </div>
+        <div class="ci-box" style="background:var(--teal-glow); border:1px solid rgba(47,182,166,.25);">
+          <div class="ci-lbl" style="color:var(--teal);">🟢 Purified Benchmark — IS 10500</div>
+          <div class="s-range">pH 7–7.4 · Turb &lt; 1 NTU · TDS 180–350 mg/L · Temp 24–26°C</div>
+        </div>
+      </div>
+      <div class="note" style="margin-top:2px;"><b style="color:var(--text-dim);">Primary issue &amp; target stage:</b> Acid mine drainage, sulfuric acid, coal fines, thermal energy extraction.</div>
+    </div><div class="card station-card " data-station="BOK" style="flex-direction:column; align-items:stretch; gap:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <div class="s-info">
+          <div class="s-name">WS-BOK — Bokaro Coalfield</div>
+          <div class="s-loc">Bokaro, Jharkhand · 23.78° N, 85.96° E</div>
+        </div>
+        <button class="btn small">Switch</button>
+      </div>
+      <div class="cause-impact" style="margin-bottom:0;">
+        <div class="ci-box" style="background:var(--coral-glow); border:1px solid rgba(225,88,79,.25);">
+          <div class="ci-lbl" style="color:var(--coral);">🔴 Raw Mine Water — Unsafe</div>
+          <div class="s-range">pH 5.6–6.4 · Turb 180–320 NTU · TDS 850–1350 mg/L · Temp 27–31°C</div>
+        </div>
+        <div class="ci-box" style="background:var(--teal-glow); border:1px solid rgba(47,182,166,.25);">
+          <div class="ci-lbl" style="color:var(--teal);">🟢 Purified Benchmark — IS 10500</div>
+          <div class="s-range">pH 7.1–7.5 · Turb &lt; 0.8 NTU · TDS 150–300 mg/L · Temp 24–26°C</div>
+        </div>
+      </div>
+      <div class="note" style="margin-top:2px;"><b style="color:var(--text-dim);">Primary issue &amp; target stage:</b> Washery slurry, suspended coal dust, dissolved carbonates.</div>
+    </div><div class="card station-card " data-station="NOA" style="flex-direction:column; align-items:stretch; gap:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <div class="s-info">
+          <div class="s-name">WS-NOA — Noamundi &amp; Kiriburu</div>
+          <div class="s-loc">West Singhbhum, Jharkhand · 22.15° N, 85.50° E</div>
+        </div>
+        <button class="btn small">Switch</button>
+      </div>
+      <div class="cause-impact" style="margin-bottom:0;">
+        <div class="ci-box" style="background:var(--coral-glow); border:1px solid rgba(225,88,79,.25);">
+          <div class="ci-lbl" style="color:var(--coral);">🔴 Raw Mine Water — Unsafe</div>
+          <div class="s-range">pH 6.5–7.4 · Turb 400–850 NTU · TDS 350–650 mg/L · Temp 25–29°C</div>
+        </div>
+        <div class="ci-box" style="background:var(--teal-glow); border:1px solid rgba(47,182,166,.25);">
+          <div class="ci-lbl" style="color:var(--teal);">🟢 Purified Benchmark — IS 10500</div>
+          <div class="s-range">pH 7.2–7.4 · Turb &lt; 0.5 NTU · TDS 200–380 mg/L · Temp 24–26°C</div>
+        </div>
+      </div>
+      <div class="note" style="margin-top:2px;"><b style="color:var(--text-dim);">Primary issue &amp; target stage:</b> Heavy colloidal hematite/iron suspension; requires high-capacity electrocoagulation/filtration (RO optional).</div>
+    </div><div class="card station-card " data-station="GHA" style="flex-direction:column; align-items:stretch; gap:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <div class="s-info">
+          <div class="s-name">WS-GHA — Ghatsila (Mosabani / Surda)</div>
+          <div class="s-loc">East Singhbhum, Jharkhand · 22.58° N, 86.48° E</div>
+        </div>
+        <button class="btn small">Switch</button>
+      </div>
+      <div class="cause-impact" style="margin-bottom:0;">
+        <div class="ci-box" style="background:var(--coral-glow); border:1px solid rgba(225,88,79,.25);">
+          <div class="ci-lbl" style="color:var(--coral);">🔴 Raw Mine Water — Unsafe</div>
+          <div class="s-range">pH 3.2–4.5 · Turb 120–220 NTU · TDS 1800–3100 mg/L · Temp 28–33°C</div>
+        </div>
+        <div class="ci-box" style="background:var(--teal-glow); border:1px solid rgba(47,182,166,.25);">
+          <div class="ci-lbl" style="color:var(--teal);">🟢 Purified Benchmark — IS 10500</div>
+          <div class="s-range">pH 7.2–7.6 · Turb &lt; 0.5 NTU · TDS 250–420 mg/L · Temp 24–26°C</div>
+        </div>
+      </div>
+      <div class="note" style="margin-top:2px;"><b style="color:var(--text-dim);">Primary issue &amp; target stage:</b> High dissolved copper (Cu²⁺), iron, and sulfates; requires active neutralization and high-rejection RO.</div>
+    </div><div class="card station-card " data-station="JAD" style="flex-direction:column; align-items:stretch; gap:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <div class="s-info">
+          <div class="s-name">WS-JAD — Jaduguda</div>
+          <div class="s-loc">East Singhbhum, Jharkhand · 22.65° N, 86.35° E</div>
+        </div>
+        <button class="btn small">Switch</button>
+      </div>
+      <div class="cause-impact" style="margin-bottom:0;">
+        <div class="ci-box" style="background:var(--coral-glow); border:1px solid rgba(225,88,79,.25);">
+          <div class="ci-lbl" style="color:var(--coral);">🔴 Raw Mine Water — Unsafe</div>
+          <div class="s-range">pH 7.2–8.2 · Turb 60–160 NTU · TDS 1500–2600 mg/L · Temp 26–32°C</div>
+        </div>
+        <div class="ci-box" style="background:var(--teal-glow); border:1px solid rgba(47,182,166,.25);">
+          <div class="ci-lbl" style="color:var(--teal);">🟢 Purified Benchmark — IS 10500</div>
+          <div class="s-range">pH 7–7.4 · Turb &lt; 0.5 NTU · TDS 200–350 mg/L · Temp 24–26°C</div>
+        </div>
+      </div>
+      <div class="note" style="margin-top:2px;"><b style="color:var(--text-dim);">Primary issue &amp; target stage:</b> Tailings pond seepage, processing reagents, high dissolved solids; requires softening and NF/RO membrane barrier.</div>
+    </div></div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<footer class="gov-footer">
+  <div class="gf-grid">
+    <div>
+      <h4><span class="en">Quick Links</span><span class="hi">त्वरित लिंक</span></h4>
+      <ul>
+        <li><a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;"><span class="en">Directorate of Mines &amp; Geology</span><span class="hi">खान एवं भूतत्व निदेशालय</span></a></li>
+        <li><a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;"><span class="en">Jharkhand State Pollution Control Board</span><span class="hi">झारखंड राज्य प्रदूषण नियंत्रण बोर्ड</span></a></li>
+        <li><a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;"><span class="en">District Mining Offices</span><span class="hi">जिला खनन कार्यालय</span></a></li>
+        <li><a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;"><span class="en">RTI Portal</span><span class="hi">आरटीआई पोर्टल</span></a></li>
+      </ul>
+    </div>
+    <div>
+      <h4><span class="en">Related Portals</span><span class="hi">संबंधित पोर्टल</span></h4>
+      <ul>
+        <li><a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;">jharkhand.gov.in</a></li>
+        <li><a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;">india.gov.in</a></li>
+        <li><a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;"><span class="en">Digital India</span><span class="hi">डिजिटल इंडिया</span></a></li>
+        <li><a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;"><span class="en">Ministry of Mines</span><span class="hi">खान मंत्रालय</span></a></li>
+      </ul>
+    </div>
+    <div>
+      <h4><span class="en">Policies</span><span class="hi">नीतियां</span></h4>
+      <ul>
+        <li><a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;"><span class="en">Terms of Use</span><span class="hi">उपयोग की शर्तें</span></a></li>
+        <li><a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;"><span class="en">Privacy Policy</span><span class="hi">गोपनीयता नीति</span></a></li>
+        <li><a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;"><span class="en">Accessibility Statement</span><span class="hi">पहुंच-योग्यता विवरण</span></a></li>
+        <li><a href="file:///C:/Users/admin/AppData/Local/Temp/%7B7262F28B-6785-474A-B6D9-C80592693D72%7D/%7B264D0355-F926-4565-8AF1-63F9DC3FC9E6%7D/index1%20(2).html#" onclick="return false;"><span class="en">Hyperlinking Policy</span><span class="hi">हाइपरलिंकिंग नीति</span></a></li>
+      </ul>
+    </div>
+    <div>
+      <h4><span class="en">Contact</span><span class="hi">संपर्क करें</span></h4>
+      <ul>
+        <li><span class="en">Department of Mines &amp; Geology</span><span class="hi">खान एवं भूतत्व विभाग</span></li>
+        <li><span class="en">Nepal House, Doranda, Ranchi — 834002</span><span class="hi">नेपाल हाउस, डोरंडा, रांची — 834002</span></li>
+        <li>Email: <span style="font-family:var(--font-mono);">mines-jh[at]gov[dot]in</span></li>
+        <li id="gov-visitor-count"><span class="en">Total Visits:</span><span class="hi">कुल विज़िट:</span> <span id="visitor-count-val">—</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="gov-footer-bottom">
+    <span>© <span id="gov-footer-year">2026</span> <span class="en">Department of Mines &amp; Geology, Government of Jharkhand. All Rights Reserved.</span><span class="hi">खान एवं भूतत्व विभाग, झारखंड सरकार। सर्वाधिकार सुरक्षित।</span></span>
+    <span><span class="en">Content Owned &amp; Maintained by Department of Mines &amp; Geology, Govt. of Jharkhand</span><span class="hi">सामग्री का स्वामित्व एवं रखरखाव खान एवं भूतत्व विभाग, झारखंड सरकार द्वारा</span> &nbsp;|&nbsp; <span class="en">Last Updated:</span><span class="hi">अंतिम अद्यतन:</span> <span id="gov-last-updated">28 Sept 2026</span></span>
+  </div>
+</footer>
+</div>
+
+<script>
+'use strict';
+
+/* ---------------------- GOVERNMENT CHROME: ACCESSIBILITY & I18N ---------------------- */
+function setFontSize(size){
+  const html = document.documentElement;
+  html.classList.remove('fs-small','fs-normal','fs-large');
+  html.classList.add('fs-' + size);
+  document.querySelectorAll('#fs-small-btn,#fs-normal-btn,#fs-large-btn').forEach(b => b.classList.remove('active-tool'));
+  const idMap = { small:'fs-small-btn', normal:'fs-normal-btn', large:'fs-large-btn' };
+  const activeBtn = document.getElementById(idMap[size]);
+  if (activeBtn) activeBtn.classList.add('active-tool');
+}
+function toggleHighContrast(){
+  const html = document.documentElement;
+  html.classList.toggle('high-contrast');
+  const btn = document.getElementById('contrast-btn');
+  if (btn) btn.classList.toggle('active-tool', html.classList.contains('high-contrast'));
+}
+function toggleLanguage(){
+  const html = document.documentElement;
+  const isHindi = html.getAttribute('data-lang') === 'hi';
+  html.setAttribute('data-lang', isHindi ? 'en' : 'hi');
+  const btn = document.getElementById('lang-btn');
+  if (btn) btn.classList.toggle('active-tool', !isHindi);
+}
+async function initGovFooterWidgets(){
+  const yearEl = document.getElementById('gov-footer-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+  const updatedEl = document.getElementById('gov-last-updated');
+  if (updatedEl) updatedEl.textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+  const countEl = document.getElementById('visitor-count-val');
+  if (countEl){
+    try {
+      let current = 128460; // baseline seed so the counter looks like an established portal
+      try {
+        const res = await window.storage.get('gov-visitor-count', true);
+        if (res && res.value) current = parseInt(res.value, 10) || current;
+      } catch(e){ /* first-ever visit, key doesn't exist yet */ }
+      current += 1;
+      countEl.textContent = current.toLocaleString('en-IN');
+      window.storage.set('gov-visitor-count', String(current), true).catch(() => {});
+    } catch(e){
+      countEl.textContent = '—';
+    }
+  }
+}
+/* ============================================================
+   AQUASENSE MINE — Smart Mining Water Quality Monitoring &
+   Treatment System. Sections: CONFIG -> STATE -> SIMULATION ->
+   STATUS/SEVERITY ENGINE -> PROBLEM DETECTION -> TREATMENT
+   ENGINE (operational) -> TREATMENT KB (recommendations) ->
+   STORAGE -> ALERTS -> CYCLE/VERIFICATION -> RENDER -> BOOT
+   ============================================================ */
+
+/* ---------------------- CONFIG: limits & stations ---------------------- */
+const LIMITS = {
+  ph:            { normal:[6.5,8.5], warning:[6.0,9.2], unit:'', label:'pH' },
+  turbidity_ntu: { normal:[0,1],     warning:[0,5],      unit:'NTU', label:'Turbidity' },
+  tds_mg_l:      { normal:[0,500],   warning:[0,2000],   unit:'mg/L', label:'TDS/EC' },
+  temperature_c: { normal:[15,32],   warning:[10,38],    unit:'°C', label:'Temperature' }
+};
+const PARAM_ORDER = ['ph','turbidity_ntu','tds_mg_l','temperature_c'];
+const TREATMENT_KEY = { ph:'ph', turbidity_ntu:'turbidity', tds_mg_l:'tds', temperature_c:'temp' };
+
+const STATIONS = {
+  JHR: { id:'WS-JHR', name:'Jharia Coalfield', loc:'Dhanbad, Jharkhand', coords:'23.74° N, 86.41° E', lat:23.74, lng:86.41,
+         note:'Coal seam fires — acidic, high suspended solids',
+         ph:[3.8,4.8], turb:[280,450], tds:[1400,2200], temp:[32,38],
+         benchmark:{ ph:[7.0,7.4], turb_max:1.0, tds:[180,350], temp:[24,26] },
+         issue:'Acid mine drainage, sulfuric acid, coal fines, thermal energy extraction.' },
+  BOK: { id:'WS-BOK', name:'Bokaro Coalfield', loc:'Bokaro, Jharkhand', coords:'23.78° N, 85.96° E', lat:23.78, lng:85.96,
+         note:'Mild acidic coal mine drainage',
+         ph:[5.6,6.4], turb:[180,320], tds:[850,1350], temp:[27,31],
+         benchmark:{ ph:[7.1,7.5], turb_max:0.8, tds:[150,300], temp:[24,26] },
+         issue:'Washery slurry, suspended coal dust, dissolved carbonates.' },
+  NOA: { id:'WS-NOA', name:'Noamundi & Kiriburu', loc:'West Singhbhum, Jharkhand', coords:'22.15° N, 85.50° E', lat:22.15, lng:85.50,
+         note:'"Red mud" — extreme turbidity, near-neutral pH',
+         ph:[6.5,7.4], turb:[400,850], tds:[350,650], temp:[25,29],
+         benchmark:{ ph:[7.2,7.4], turb_max:0.5, tds:[200,380], temp:[24,26] },
+         issue:'Heavy colloidal hematite/iron suspension; requires high-capacity electrocoagulation/filtration (RO optional).' },
+  GHA: { id:'WS-GHA', name:'Ghatsila (Mosabani / Surda)', loc:'East Singhbhum, Jharkhand', coords:'22.58° N, 86.48° E', lat:22.58, lng:86.48,
+         note:'Acid mine drainage — heavy sulfates and dissolved copper',
+         ph:[3.2,4.5], turb:[120,220], tds:[1800,3100], temp:[28,33],
+         benchmark:{ ph:[7.2,7.6], turb_max:0.5, tds:[250,420], temp:[24,26] },
+         issue:'High dissolved copper (Cu²⁺), iron, and sulfates; requires active neutralization and high-rejection RO.' },
+  JAD: { id:'WS-JAD', name:'Jaduguda', loc:'East Singhbhum, Jharkhand', coords:'22.65° N, 86.35° E', lat:22.65, lng:86.35,
+         note:'Neutral/alkaline — high process-salt TDS',
+         ph:[7.2,8.2], turb:[60,160], tds:[1500,2600], temp:[26,32],
+         benchmark:{ ph:[7.0,7.4], turb_max:0.5, tds:[200,350], temp:[24,26] },
+         issue:'Tailings pond seepage, processing reagents, high dissolved solids; requires softening and NF/RO membrane barrier.' },
+};
+
+/* ---------------------- CONFIG: problem detection knowledge ---------------------- */
+const PROBLEM_KB = {
+  ph: {
+    low:  { name:'Acidic Water / Acid Mine Drainage (AMD)', cause:'Oxidation of pyrite (FeS₂) and other sulphide minerals exposed by mining activity, generating sulphuric acid that lowers pH.', impact:'Corrodes infrastructure, mobilizes toxic heavy metals (Fe, Al, Mn), harms aquatic life, and depresses pH in the receiving water body.' },
+    high: { name:'Alkaline Process Water', cause:'Excess lime dosing upstream, alkaline ore-processing residues, or cement/concrete leachate entering the water course.', impact:'Can precipitate carbonate scale in pipework, pushes aquatic organisms outside their tolerance band, and reduces disinfection efficiency.' }
+  },
+  turbidity_ntu: {
+    high: { name:'Suspended Particulate Load', cause:'Coal fines, ore tailings ("red mud"), and excavation silt entering the water via runoff and process discharge.', impact:'Blocks light penetration and smothers aquatic habitat, clogs downstream filtration/treatment equipment, and can carry adsorbed heavy metals.' }
+  },
+  tds_mg_l: {
+    high: { name:'Elevated Dissolved Solids / Salinity', cause:'Leaching of sulphates, chlorides and dissolved metals from exposed ore and waste rock, plus residual process chemicals.', impact:'Degrades water for irrigation/drinking use, contributes to salinization of the receiving water body, and accelerates equipment corrosion.' }
+  },
+  temperature_c: {
+    high: { name:'Thermal Anomaly (Elevated)', cause:'Underground coal-seam fires (as at Jharia), local geothermal gradient, or heat rejected from active mining/processing operations.', impact:'Lowers dissolved oxygen, accelerates scaling/chemical reaction rates, stresses aquatic organisms, and reduces downstream treatment efficiency.' },
+    low:  { name:'Thermal Anomaly (Depressed)', cause:'Seasonal ambient cooling or a high volume of surface run-off entering the system.', impact:'Slows biological/chemical treatment kinetics; generally a lower environmental risk than an elevated-temperature excursion.' }
+  }
+};
+const ROUTING = {
+  low:      'Mine Site Supervisor — logged, no external notification required',
+  medium:   'Mine Administration + Environmental Compliance Officer',
+  high:     'State Pollution Control Board + Mine Safety Officer',
+  critical: 'Central/State Pollution Control Board + District Mining Officer + Emergency Response Team'
+};
+
+/* ---------------------- CONFIG: 3-tier treatment recommendation knowledge base ---------------------- */
+const TREATMENT_KB = {
+  ph: {
+    traditional: { title:'Lime / Limestone Neutralization',
+      equipment:['Hydrated lime Ca(OH)₂ or crushed limestone CaCO₃','Slurry mixing/dosing tank','In-line pH probe + controller','Metering dosing pump','Reaction/retention basin'],
+      steps:['Continuously measure inlet pH with an in-line probe.','Meter lime/limestone slurry into the reaction tank proportional to acidity load.','Mix for 15–30 min retention time to allow neutralization to complete.','Let precipitated metal hydroxides (Fe, Al, Mn) settle in a clarifier.','Re-check pH before discharge/reuse; trim dosing if still out of range.'],
+      advantages:['Low capital cost, simple to operate','Fast-acting on strongly acidic water','Reagents widely available'],
+      limitations:['Generates metal-hydroxide sludge requiring disposal','Prone to overshoot without tight control','Ongoing reagent cost scales with acidity load'] },
+    international: { title:'Anoxic Limestone Drain (ALD) + Constructed Wetland',
+      intlRef:'Passive AMD treatment used across Appalachian coalfields (USA) and at abandoned coal sites in the UK (Coal Authority mine-water schemes).',
+      equipment:['Buried limestone gravel drain (sealed from atmospheric O₂)','Constructed wetland cells (aerobic + anaerobic)','Settling/polishing pond'],
+      steps:['Route acidic water through a sealed limestone bed before it meets oxygen, preventing iron-precipitate armoring of the limestone.','Discharge into a constructed wetland where metals oxidize and settle as the water re-aerates.','Anaerobic wetland cells with organic substrate host sulphate-reducing bacteria that further raise pH and precipitate metal sulphides.','Water exits through a polishing pond before discharge/reuse.'],
+      benefits:['No chemical dosing or electricity — passive, gravity-fed','Very low ongoing operating cost and supervision','Wetland habitat as an ecological co-benefit'],
+      energyChemical:'Near-zero — passive gravity flow; limestone charge replaced only every several years.',
+      advantageOverTraditional:['No sludge handling at the point of treatment','Far lower long-term operating cost','No risk of chemical overshoot'] }
+  },
+  turbidity_ntu: {
+    traditional: { title:'Sedimentation + Coagulant-Assisted Sand Filtration',
+      equipment:['Coagulant dosing system (alum / polyaluminium chloride)','Flocculation tank','Sedimentation clarifier','Multi-media sand/dual-media filter'],
+      steps:['Dose coagulant (alum or PAC) to destabilize suspended coal/ore particles.','Slow-mix in a flocculation tank to grow settleable flocs.','Allow flocs to settle in a sedimentation clarifier.','Pass clarified water through a multi-media sand filter to remove residual fines.','Backwash the filter periodically to restore capacity.'],
+      advantages:['Proven, low-tech, easy to operate and maintain','Handles moderate turbidity loads well','Low equipment cost'],
+      limitations:['Struggles with extreme "red mud"-type loads (>400 NTU)','Coagulant sludge requires disposal','Backwash water needs further handling'] },
+    international: { title:'Electrocoagulation (Fe/Al Electrodes) + Ceramic Micro/Ultrafiltration',
+      intlRef:'Electrocoagulation is used at mine tailings-water facilities in Australia and Canada; ceramic UF is established in industrial water-reuse plants in Japan and the EU.',
+      equipment:['Electrocoagulation cell (sacrificial Fe/Al electrode plates, DC supply)','Flotation/settling stage for coagulated floc','Ceramic micro/ultrafiltration membrane skid'],
+      steps:['Pass water through an electrocoagulation cell; applied current dissolves Fe/Al electrodes in situ, generating coagulant without bulk chemical storage.','Fine electrolysis gas bubbles float coagulated particles for easy removal (electroflotation).','Polish the effluent through ceramic micro/ultrafiltration to reach sub-0.1 NTU permeate.','Periodically air-scour/backwash the membranes to maintain flux.'],
+      benefits:['Achieves permeate turbidity below 0.1 NTU','No bulk chemical storage/handling on site','Compact footprint versus conventional clarifiers'],
+      energyChemical:'Electrical only, typically 0.5–2 kWh/m³ depending on particle load; electrodes are consumed and replaced periodically.',
+      advantageOverTraditional:['Far higher, more consistent removal on extreme loads','No liquid coagulant supply chain','Smaller physical footprint'] }
+  },
+  tds_mg_l: {
+    traditional: { title:'Dilution / Conventional Coagulation-Settling',
+      equipment:['Dilution/blending tank (where a lower-TDS source exists)','Coagulant dosing (co-precipitates some dissolved metals)','Settling basin'],
+      steps:['Blend high-TDS water with a lower-TDS source where available.','Dose coagulant to co-precipitate a portion of dissolved metals with suspended solids.','Settle and decant.','Re-check TDS/EC — true dissolved salts (sulphates, chlorides) remain largely unaffected.'],
+      advantages:['Very low cost where a dilution source exists','Simple to add to existing sedimentation infrastructure'],
+      limitations:['Does not remove dissolved salts, only dilutes them','Ineffective alone for sulphate-heavy AMD or process-salt water','Requires a secondary water source, not always available'] },
+    international: { title:'Multi-Stage Reverse Osmosis (UF Pre-treatment + RO)',
+      intlRef:'Used for coal-seam-gas produced-water treatment in Australia and AMD reclamation projects in South Africa.',
+      equipment:['Ultrafiltration pre-treatment skid','High-pressure RO pump','Multi-stage RO membrane array','Concentrate/brine management line'],
+      steps:['Pre-treat with ultrafiltration to protect RO membranes from fouling.','Pressurize and pass water through RO membranes; permeate exits as low-TDS clean water.','Route the concentrated reject/brine stream to a separate management step.','Monitor membrane differential pressure and periodically clean-in-place (CIP) to control fouling/scaling.'],
+      benefits:['Removes 90%+ of dissolved salts including sulphates and most dissolved metals','Produces a reusable-quality permeate stream','Commercially mature, well-proven technology'],
+      energyChemical:'Energy-intensive, typically 1–3 kWh/m³ depending on feed TDS and pressure; needs periodic antiscalant and CIP chemicals.',
+      advantageOverTraditional:['Actually removes dissolved salts rather than diluting them','Defined permeate quality suitable for reuse','Scales to continuous, unattended operation'] }
+  },
+  temperature_c: {
+    traditional: { title:'Passive Heat Dissipation / Cooling Ponds',
+      equipment:['Cooling pond or cascade aerator','Temperature sensor with boundary alarm'],
+      steps:['Route water through a cooling pond or cascade structure to lose heat to ambient air.','Continuously monitor discharge temperature against the permitted boundary.','Trigger a boundary alarm if temperature remains outside range after passive cooling.'],
+      advantages:['No equipment cost beyond a pond/structure','No energy input required'],
+      limitations:['Slow and weather-dependent, large land footprint','No value recovered from the thermal energy — it is simply dissipated'] },
+    international: { title:'Mine-Water Heat Recovery via Heat Exchanger',
+      intlRef:'Operating examples include the Heerlen minewater geothermal network (Netherlands) and UK Coal Authority mine-water heat schemes at Gateshead and Seaham.',
+      equipment:['Plate or shell-and-tube heat exchanger','Secondary heating/cooling distribution loop','Circulation pumps'],
+      steps:['Pass warm mine water through one side of a heat exchanger.','Transfer heat to a clean secondary loop feeding a district heating network, greenhouse, or building HVAC.','Return the now-cooled mine water to the treatment/discharge line.','Monitor exchanger performance and clean periodically to prevent scaling/fouling losses.'],
+      benefits:['Recovers usable thermal energy instead of wasting it','Corrects the discharge-temperature excursion as a side effect','Can offset heating/cooling costs for nearby facilities'],
+      energyChemical:'Circulation-pump power only, no chemicals; net energy-positive when nearby heat demand exists.',
+      advantageOverTraditional:['Turns a compliance problem into an energy asset','Faster, more controllable correction than passive ponds'] }
+  }
+};
+const TIER_LABELS = { traditional:'Traditional', international:'Advanced / International' };
+const FLOW_RATE_KGS = 5;   // assumed process flow rate, kg/s (~5 L/s)
+const WATER_CP = 4.186;    // kJ/kg·K
+const GSHP_TARGET_C = 22;  // tempered discharge target
+const RETREAT_TARGET_MAX_SEVERITY = 'low'; // treated water must be 'normal' or 'low' to pass
+
+/* ---------------------- STATE ---------------------- */
+let state = {
+  stationKey:'JHR', paused:false, offline:false,
+  lastReading:null, lastReadingTime:null,
+  readings:[], alerts:[], treatmentEvents:[],
+  anomalyPulse:0,
+  treatmentMode:{ ph:'traditional', turbidity:'traditional', tds:'traditional', temp:'traditional' },
+  lastSeverity:{}, // per param, for edge-triggered alerting
+  cycle:{ count:0, input:null, lastVerdict:null },
+  stationVerdicts:{}, // per station: 'SAFE' once purified, else unset (affected/contaminated)
+  auth:{ signedIn:false, role:null, id:null } // role: 'authority' (full control) or 'public' (view-only)
+};
+
+function nowIso(){ return new Date().toISOString(); }
+function fmtTime(iso){ const d = new Date(iso); return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'}); }
+function round(v,n=2){ const m = Math.pow(10,n); return Math.round(v*m)/m; }
+function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
+function mid(range){ return (range[0]+range[1])/2; }
+
+/* ---------------------- SIMULATION ---------------------- */
+function seedReadingForStation(stationKey){
+  const s = STATIONS[stationKey];
+  return { station_id:s.id, timestamp:nowIso(), ph:round(mid(s.ph),2), turbidity_ntu:round(mid(s.turb),1), tds_mg_l:round(mid(s.tds),0), temperature_c:round(mid(s.temp),1) };
+}
+function nextReading(prev, stationKey){
+  const s = STATIONS[stationKey];
+  const r = { station_id:s.id, timestamp:nowIso() };
+  const margin = 0.06;
+  r.ph = round(clamp(prev.ph + (Math.random()-0.5)*0.15, s.ph[0]-0.3, s.ph[1]+0.3), 2);
+  r.turbidity_ntu = round(clamp(prev.turbidity_ntu + (Math.random()-0.5)*(s.turb[1]-s.turb[0])*margin, Math.max(0.05,s.turb[0]*0.7), s.turb[1]*1.2), 1);
+  r.tds_mg_l = round(clamp(prev.tds_mg_l + (Math.random()-0.5)*(s.tds[1]-s.tds[0])*margin, s.tds[0]*0.8, s.tds[1]*1.15), 0);
+  r.temperature_c = round(clamp(prev.temperature_c + (Math.random()-0.5)*0.4, s.temp[0]-2, s.temp[1]+2), 1);
+  if (state.anomalyPulse > 0){
+    r.turbidity_ntu = round(r.turbidity_ntu + s.turb[1]*0.35 + Math.random()*40, 1);
+    r.tds_mg_l = round(r.tds_mg_l + s.tds[1]*0.25 + Math.random()*150, 0);
+    r.ph = round(clamp(r.ph - 0.5, 0, 14), 2);
+    state.anomalyPulse -= 1;
+  }
+  return r;
+}
+
+/* ---------------------- SEVERITY / STATUS ENGINE ---------------------- */
+const SEV_ORDER = { normal:0, low:1, medium:2, high:3, critical:4, error:5 };
+function severityOf(key, value){
+  const lim = LIMITS[key];
+  if (value === null || value === undefined || isNaN(value)) return 'error';
+  if (key==='ph' && (value < 0 || value > 14)) return 'error';
+  if (key!=='ph' && value < 0) return 'error';
+  if (value >= lim.normal[0] && value <= lim.normal[1]) return 'normal';
+  // distance beyond the nearer normal edge, relative to the warning band width
+  const belowNormal = value < lim.normal[0];
+  const normalEdge = belowNormal ? lim.normal[0] : lim.normal[1];
+  const warnEdge = belowNormal ? lim.warning[0] : lim.warning[1];
+  const bandWidth = Math.max(Math.abs(warnEdge - normalEdge), 0.0001);
+  const dist = Math.abs(value - normalEdge);
+  const f = dist / bandWidth;
+  if (value >= lim.warning[0] && value <= lim.warning[1]){
+    if (f <= 0.34) return 'low';
+    if (f <= 0.7) return 'medium';
+    return 'high';
+  }
+  return 'critical';
+}
+function worstSeverity(list){ return list.reduce((a,b)=> SEV_ORDER[b] > SEV_ORDER[a] ? b : a, 'normal'); }
+function evaluateReading(reading, prevReading){
+  const statuses = {};
+  PARAM_ORDER.forEach(k => statuses[k] = severityOf(k, reading[k]));
+  let overall = worstSeverity(Object.values(statuses));
+  let anomaly = false;
+  if (prevReading){
+    const jump = Math.abs(reading.turbidity_ntu - prevReading.turbidity_ntu);
+    if (jump > Math.max(30, prevReading.turbidity_ntu*0.4)){
+      anomaly = true;
+      overall = SEV_ORDER[overall] < SEV_ORDER['high'] ? 'high' : 'critical';
+    }
+  }
+  return { statuses, overall, anomaly };
+}
+function dataHealth(){
+  if (state.offline) return 'offline';
+  if (!state.lastReadingTime) return 'offline';
+  const secs = (Date.now() - state.lastReadingTime) / 1000;
+  if (secs > 10) return 'stale';
+  return 'live';
+}
+
+/* ---------------------- PROBLEM DETECTION ---------------------- */
+function directionOf(key, value){
+  const lim = LIMITS[key];
+  if (value < lim.normal[0]) return 'low';
+  if (value > lim.normal[1]) return 'high';
+  return null;
+}
+function detectProblem(key, value){
+  const dir = directionOf(key, value);
+  if (!dir) return null;
+  const kb = PROBLEM_KB[key] && PROBLEM_KB[key][dir];
+  if (!kb) return null;
+  return { direction:dir, ...kb };
+}
+
+/* ---------------------- TREATMENT ENGINE (operational simulation) ---------------------- */
+function stagePH(raw, mode){
+  let ph = raw.ph, turbMult = 1, tdsMult = 1, note = '';
+  if (mode === 'traditional'){
+    ph = round(raw.ph + (7.0 - raw.ph) * 0.75 + (Math.random()-0.5)*0.25, 2);
+    turbMult = 1.08; tdsMult = 1.03;
+    note = 'Lime slurry dosed — some precipitate turbidity added, minor chemical TDS increase.';
+  } else if (mode === 'international'){
+    ph = round(raw.ph + (6.9 - raw.ph) * 0.55, 2);
+    turbMult = 0.92; tdsMult = 1.00;
+    note = 'ALD + wetland — passive neutralization, natural filtration slightly reduces turbidity.';
+  } else {
+    ph = round(raw.ph + (7.2 - raw.ph) * 0.93, 2);
+    turbMult = 1.00; tdsMult = 1.00;
+    note = 'AI PID loop — dosing pump throttled to converge precisely on target pH with minimal overshoot.';
+  }
+  return { ph, turbMult, tdsMult, note };
+}
+function stageTurbidity(inputTurb, rawTurb, mode){
+  let turb, tdsMult = 1, note = '';
+  if (mode === 'traditional'){
+    const floor = rawTurb > 400 ? rawTurb*0.03 : 1.5;
+    turb = round(Math.max(floor, inputTurb * 0.08), 2);
+    note = 'Sedimentation + multi-media sand filter — strong reduction, extreme loads leave residual NTU.';
+  } else if (mode === 'international'){
+    turb = round(Math.min(0.09, inputTurb * 0.004 + 0.02), 3);
+    tdsMult = 0.95;
+    note = 'Electrocoagulation + ceramic UF — permeate held under 0.1 NTU; electrodes remove some dissolved metals.';
+  } else {
+    turb = round(clamp(0.3 + inputTurb*0.0015, 0.2, 1.0), 2);
+    note = 'Smart adaptive backwash / pulse-coagulation — continuously tuned to optical load.';
+  }
+  return { turb, tdsMult, note };
+}
+function stageTDS(inputTds, mode){
+  let tds, concentrate = null, bypassed = false, flag = null, note = '', turbMult = 1;
+  const TARGET = 500;
+  if (mode === 'traditional'){
+    tds = round(inputTds * 0.95, 0);
+    if (tds > TARGET) flag = 'INEFFECTIVE — HIGH TDS (dissolved salts not removed)';
+    note = 'Dilution / conventional coagulation has little effect on dissolved solids.';
+  } else if (mode === 'international'){
+    tds = round(inputTds * 0.06, 0);
+    concentrate = round(inputTds * 2.6, 0);
+    turbMult = 0.5;
+    note = 'Multi-stage RO — UF pre-treatment then RO splits permeate (clean) from concentrate (reject).';
+  } else {
+    if (inputTds < TARGET){
+      tds = inputTds; bypassed = true; flag = 'RO BYPASSED — below target, power saved';
+      note = 'Dynamic membrane routing — TDS already under target, RO bypassed to save energy.';
+    } else {
+      tds = round(inputTds * 0.06, 0);
+      concentrate = round(inputTds * 2.6, 0);
+      turbMult = 0.5;
+      flag = 'HIGH-PRESSURE MODE — anti-fouling alert triggered';
+      note = 'Dynamic membrane routing — spike detected, RO engaged with anti-fouling monitoring.';
+    }
+  }
+  return { tds, concentrate, bypassed, flag, note, turbMult };
+}
+function stageTemp(inputTemp, mode){
+  let temp, energyKW = 0, note = '';
+  if (mode === 'traditional'){
+    temp = round(inputTemp - (inputTemp-25)*0.15, 1);
+    note = 'Passive heat dissipation toward ambient — boundary alarm only, no recovery.';
+  } else {
+    const deltaT = Math.max(0, inputTemp - GSHP_TARGET_C);
+    energyKW = round(FLOW_RATE_KGS * WATER_CP * deltaT, 1);
+    temp = round(inputTemp - deltaT, 1);
+    note = `Geothermal Heat Pump recovery loop — ${energyKW} kW harvested at an assumed ${FLOW_RATE_KGS} L/s flow.`;
+  }
+  return { temp, energyKW, note };
+}
+function computeChain(raw, mode){
+  const s1 = { key:'inlet', name:'Inlet — Raw Mine Water', ph:raw.ph, turbidity_ntu:raw.turbidity_ntu, tds_mg_l:raw.tds_mg_l, temperature_c:raw.temperature_c, note:'Untreated inflow from the pit / drainage sump.', flag:null };
+  const phR = stagePH(raw, mode.ph);
+  const s2 = { key:'ph', name: mode.ph==='traditional' ? 'pH Neutralizer — Lime Dosing' : mode.ph==='international' ? 'Passive pH — ALD + Wetland' : 'AI Neural pH Dosing (PID)',
+    ph:phR.ph, turbidity_ntu:round(raw.turbidity_ntu*phR.turbMult,2), tds_mg_l:round(raw.tds_mg_l*phR.tdsMult,0), temperature_c:raw.temperature_c, note:phR.note, flag:null };
+  const turbR = stageTurbidity(s2.turbidity_ntu, raw.turbidity_ntu, mode.turbidity);
+  const s3 = { key:'turb', name: mode.turbidity==='traditional' ? 'Sedimentation + Sand Filter' : mode.turbidity==='international' ? 'Electrocoagulation + Ceramic UF' : 'Smart Adaptive Backwash',
+    ph:s2.ph, turbidity_ntu:turbR.turb, tds_mg_l:round(s2.tds_mg_l*turbR.tdsMult,0), temperature_c:s2.temperature_c, note:turbR.note, flag:null };
+  const tdsR = stageTDS(s3.tds_mg_l, mode.tds);
+  const s4 = { key:'tds', name: mode.tds==='traditional' ? 'Dilution / Coagulation' : mode.tds==='international' ? 'Multi-Stage Reverse Osmosis' : (tdsR.bypassed ? 'Dynamic RO — Bypassed' : 'Dynamic RO — Engaged'),
+    ph:s3.ph, turbidity_ntu:round(s3.turbidity_ntu*tdsR.turbMult,3), tds_mg_l:tdsR.tds, concentrate_mg_l:tdsR.concentrate, temperature_c:s3.temperature_c, note:tdsR.note, flag:tdsR.flag };
+  const tempR = stageTemp(s4.temperature_c, mode.temp);
+  const s5 = { key:'temp', name: mode.temp==='traditional' ? 'Passive Heat Dissipation' : 'Geothermal Heat Exchanger (GSHP)',
+    ph:s4.ph, turbidity_ntu:s4.turbidity_ntu, tds_mg_l:s4.tds_mg_l, temperature_c:tempR.temp, energyKW:tempR.energyKW, note:tempR.note, flag:null };
+  const s6 = { key:'clean', name:'Clean Permeate — Discharge', ph:s5.ph, turbidity_ntu:s5.turbidity_ntu, tds_mg_l:s5.tds_mg_l, temperature_c:s5.temperature_c, note:'Final monitored discharge/reuse point.', flag:null, energyKW:tempR.energyKW };
+  return [s1,s2,s3,s4,s5,s6];
+}
+
+/* ---------------------- STORAGE ---------------------- */
+let saveTimer = null;
+function scheduleSave(){
+  if (saveTimer) return;
+  saveTimer = setTimeout(async () => {
+    saveTimer = null;
+    try {
+      await window.storage.set('swm-mine-app-state-v2', JSON.stringify({
+        stationKey: state.stationKey, treatmentMode: state.treatmentMode,
+        readings: state.readings.slice(-80), alerts: state.alerts.slice(-60),
+        treatmentEvents: state.treatmentEvents.slice(-30), cycle: state.cycle,
+        stationVerdicts: state.stationVerdicts
+      }), false);
+    } catch(e){ /* best-effort */ }
+  }, 4000);
+}
+async function loadState(){
+  try {
+    const res = await window.storage.get('swm-mine-app-state-v2', false);
+    if (res && res.value){
+      const parsed = JSON.parse(res.value);
+      if (parsed.stationKey && STATIONS[parsed.stationKey]) state.stationKey = parsed.stationKey;
+      if (parsed.treatmentMode) state.treatmentMode = Object.assign(state.treatmentMode, parsed.treatmentMode);
+      if (parsed.readings && parsed.readings.length){
+        state.readings = parsed.readings;
+        const lastEntry = state.readings[state.readings.length-1];
+        state.lastReading = lastEntry.reading;
+        state.lastReadingTime = new Date(state.lastReading.timestamp).getTime();
+      }
+      if (parsed.alerts) state.alerts = parsed.alerts;
+      if (parsed.treatmentEvents) state.treatmentEvents = parsed.treatmentEvents;
+      if (parsed.cycle) state.cycle = parsed.cycle;
+      if (parsed.stationVerdicts) state.stationVerdicts = parsed.stationVerdicts;
+    }
+  } catch(e){ /* no prior state */ }
+  if (!state.lastReading){
+    const seed = seedReadingForStation(state.stationKey);
+    const evalr = evaluateReading(seed, null);
+    state.lastReading = seed; state.lastReadingTime = Date.now();
+    state.readings.push({ reading:seed, eval:evalr });
+  }
+}
+
+/* ---------------------- ALERTS ---------------------- */
+function pushAlert(severity, param, value, message, opts){
+  opts = opts || {};
+  state.alerts.unshift({
+    id:'AL'+Date.now()+Math.floor(Math.random()*999), timestamp:nowIso(),
+    station_id: STATIONS[state.stationKey].id, parameter:param, value, severity, message,
+    cause: opts.cause || null, impact: opts.impact || null, range: opts.range || null,
+    routedTo: opts.routedTo || null, acknowledged:false
+  });
+  state.alerts = state.alerts.slice(0,80);
+}
+function maybeAlertFromEval(reading, evalr){
+  PARAM_ORDER.forEach(k => {
+    const sev = evalr.statuses[k];
+    const prevSev = state.lastSeverity[k] || 'normal';
+    if (sev !== prevSev && SEV_ORDER[sev] > SEV_ORDER['normal']){
+      const problem = detectProblem(k, reading[k]);
+      const lim = LIMITS[k];
+      const routed = ROUTING[sev] || ROUTING.low;
+      const msg = problem ? `${problem.name} detected — ${LIMITS[k].label} ${sev.toUpperCase()}` : `${lim.label} ${sev.toUpperCase()} — outside reference range`;
+      pushAlert(sev, k, reading[k], msg, {
+        cause: problem ? problem.cause : null, impact: problem ? problem.impact : null,
+        range: `${lim.normal[0]}–${lim.normal[1]}${lim.unit}`, routedTo: routed
+      });
+    }
+    state.lastSeverity[k] = sev;
+  });
+}
+
+/* ---------------------- TICK LOOP ---------------------- */
+function tick(){
+  if (state.paused || state.offline) { render(); return; }
+  const prev = state.lastReading;
+  const reading = nextReading(prev, state.stationKey);
+  const evalr = evaluateReading(reading, prev);
+  state.lastReading = reading; state.lastReadingTime = Date.now();
+  state.readings.push({ reading, eval: evalr });
+  state.readings = state.readings.slice(-80);
+  maybeAlertFromEval(reading, evalr);
+  scheduleSave();
+  render();
+}
+
+/* ---------------------- STATION-SPECIFIC PURIFIED BENCHMARK ---------------------- */
+function withinBenchmark(paramKey, value, stationKey){
+  const b = STATIONS[stationKey].benchmark;
+  if (!b) return withinLimit(paramKey, value);
+  if (paramKey === 'turbidity_ntu') return value < b.turb_max;
+  if (paramKey === 'ph') return value >= b.ph[0] && value <= b.ph[1];
+  if (paramKey === 'tds_mg_l') return value >= b.tds[0] && value <= b.tds[1];
+  if (paramKey === 'temperature_c') return value >= b.temp[0] && value <= b.temp[1];
+  return true;
+}
+function benchmarkLabel(paramKey, stationKey){
+  const b = STATIONS[stationKey].benchmark;
+  if (!b) return '';
+  if (paramKey === 'turbidity_ntu') return `< ${b.turb_max} NTU`;
+  if (paramKey === 'ph') return `${b.ph[0]}–${b.ph[1]}`;
+  if (paramKey === 'tds_mg_l') return `${b.tds[0]}–${b.tds[1]} mg/L`;
+  if (paramKey === 'temperature_c') return `${b.temp[0]}–${b.temp[1]}°C`;
+  return '';
+}
+
+/* ---------------------- TREATMENT CYCLE / SECONDARY QUALITY CHECK ---------------------- */
+function runTreatmentCycle(){
+  const inputReading = state.cycle.input || state.lastReading;
+  const chain = computeChain(inputReading, state.treatmentMode);
+  const clean = chain[chain.length-1];
+  const evalAfter = evaluateReading(clean, null);
+  const worst = evalAfter.overall;
+
+  const efficiency = {};
+  PARAM_ORDER.forEach(k => {
+    if (k === 'temperature_c') { efficiency[k] = null; return; }
+    const before = inputReading[k], after = clean[k];
+    efficiency[k] = before !== 0 ? round(((before-after)/Math.abs(before))*100, 1) : 0;
+  });
+
+  const benchPass = PARAM_ORDER.every(k => withinBenchmark(k, clean[k], state.stationKey));
+  let verdict;
+  if (benchPass) verdict = 'SAFE';
+  else if (SEV_ORDER[worst] <= SEV_ORDER['medium']) verdict = 'RE-TREAT';
+  else verdict = 'ESCALATE';
+
+  state.cycle.count += 1;
+  const cycleNo = state.cycle.count;
+  const event = {
+    id:'TE'+Date.now(), cycle:cycleNo, timestamp:nowIso(), station_id:STATIONS[state.stationKey].id,
+    input_snapshot:{ ph:inputReading.ph, turbidity_ntu:inputReading.turbidity_ntu, tds_mg_l:inputReading.tds_mg_l, temperature_c:inputReading.temperature_c },
+    output_snapshot:{ ph:clean.ph, turbidity_ntu:clean.turbidity_ntu, tds_mg_l:clean.tds_mg_l, temperature_c:clean.temperature_c },
+    efficiency, energyKW: clean.energyKW || 0, event_status: verdict
+  };
+  state.treatmentEvents.unshift(event);
+  state.treatmentEvents = state.treatmentEvents.slice(0,40);
+
+  if (verdict === 'SAFE'){
+    state.cycle = { count:0, input:null, lastVerdict:'SAFE' };
+    state.stationVerdicts[state.stationKey] = 'SAFE';
+  } else {
+    state.cycle.input = { station_id:inputReading.station_id, timestamp:nowIso(), ph:clean.ph, turbidity_ntu:clean.turbidity_ntu, tds_mg_l:clean.tds_mg_l, temperature_c:clean.temperature_c };
+    state.cycle.lastVerdict = verdict;
+    state.stationVerdicts[state.stationKey] = 'UNSAFE';
+    if (verdict === 'ESCALATE'){
+      const worstParam = PARAM_ORDER.reduce((acc,k) => SEV_ORDER[evalAfter.statuses[k]] > SEV_ORDER[evalAfter.statuses[acc]] ? k : acc, PARAM_ORDER[0]);
+      const problem = detectProblem(worstParam, clean[worstParam]);
+      pushAlert('critical', worstParam, clean[worstParam],
+        `ESCALATION — water still fails quality criteria after treatment cycle ${cycleNo}. Additional treatment stage required.`,
+        { cause: problem ? problem.cause : 'Treatment tier insufficient for current contamination level.', impact: problem ? problem.impact : 'Discharge/reuse withheld until quality criteria are met.',
+          range: `${LIMITS[worstParam].normal[0]}–${LIMITS[worstParam].normal[1]}${LIMITS[worstParam].unit}`, routedTo: ROUTING.critical });
+    }
+  }
+  scheduleSave();
+  renderPurification(); renderVerification(); renderHome(); renderHistory(); renderAlerts();
+}
+
+/* ============================================================ RENDERING ============================================================ */
+const SEV_LABEL = { normal:'NORMAL', low:'LOW', medium:'MEDIUM', high:'HIGH', critical:'CRITICAL', error:'SENSOR ERROR', offline:'STATION OFFLINE', stale:'STALE', live:'LIVE' };
+function statusPillHtml(status, idAttr){
+  const cls = ['normal','low','medium','high','critical'].includes(status) ? status : (status==='error'||status==='offline') ? 'offline' : 'normal';
+  const idPart = idAttr ? ` id="${idAttr}"` : '';
+  return `<span${idPart} class="pill ${cls}"><span class="dot"></span>${SEV_LABEL[status]||status.toUpperCase()}</span>`;
+}
+function paramCardHtml(key, reading, status){
+  const lim = LIMITS[key];
+  const cls = ['low','medium','high','critical'].includes(status) ? 'status-'+status : status==='error' ? 'status-critical' : 'status-normal';
+  const val = reading ? reading[key] : '—';
+  return `
+    <div class="card reading-card ${cls}">
+      <div class="badge"></div>
+      <div class="param-name">${lim.label}</div>
+      <div class="param-value">${val}<span class="unit">${lim.unit}</span></div>
+      <div class="param-range">normal ${lim.normal[0]}–${lim.normal[1]}${lim.unit}</div>
+      <div class="sev-tag">${SEV_LABEL[status]||''}</div>
+    </div>`;
+}
+function renderReadingCards(containerId){
+  const reading = state.lastReading;
+  const last = state.readings[state.readings.length-1];
+  const evalr = last ? last.eval : evaluateReading(reading, null);
+  document.getElementById(containerId).innerHTML = PARAM_ORDER.map(k => paramCardHtml(k, reading, evalr.statuses[k])).join('');
+  return evalr;
+}
+
+function renderFlowRibbon(evalr){
+  const health = dataHealth();
+  const hasProblem = evalr.overall !== 'normal';
+  const cycle = state.cycle;
+  const nodes = ['Raw Water','Sensor Monitoring','Problem Detection','Govt/Admin Alert','AI Treatment Recommendation','Treatment Options','Treatment Execution','Post-Treatment Check','Safe / Re-treat / Escalate','Reuse or Safe Discharge'];
+  let lit = 2; // raw water + sensor monitoring always lit when live
+  if (health === 'offline') lit = 0;
+  else {
+    if (hasProblem) lit = 4; else lit = 2;
+    if (cycle.count > 0 || cycle.lastVerdict) lit = 8;
+    if (cycle.lastVerdict === 'SAFE') lit = 10;
+  }
+  const badVerdict = cycle.lastVerdict === 'RE-TREAT' || cycle.lastVerdict === 'ESCALATE';
+  const html = nodes.map((label,i) => {
+    let cls = '';
+    if (i < lit) cls = (badVerdict && i >= 8) ? 'lit-warn' : 'lit';
+    return `<div class="flow-stage ${cls}"><div class="flow-line"></div><div class="flow-node">${i+1}</div><div class="flow-lbl">${label}</div></div>`;
+  }).join('');
+  document.getElementById('flow-track').innerHTML = html;
+}
+
+function renderTopStatus(overall){
+  const health = dataHealth();
+  const effective = health === 'offline' ? 'offline' : overall;
+  const pillEl = document.getElementById('global-status-pill');
+  if (pillEl) pillEl.outerHTML = statusPillHtml(effective, 'global-status-pill');
+  const st = STATIONS[state.stationKey];
+  document.getElementById('sfoot-station').innerHTML = `<b>${st.id}</b> · ${st.name}`;
+  document.getElementById('sfoot-status').textContent = `${SEV_LABEL[effective]} · ${health.toUpperCase()}`;
+  const unacked = state.alerts.filter(a=>!a.acknowledged).length;
+  const badge = document.getElementById('nav-alert-badge');
+  if (unacked > 0){ badge.style.display='inline-block'; badge.textContent = unacked; } else { badge.style.display='none'; }
+}
+
+function renderHome(){
+  const evalr = renderReadingCards('home-reading-cards');
+  renderFlowRibbon(evalr);
+  const health = dataHealth();
+  const st = STATIONS[state.stationKey];
+  document.getElementById('home-station-health').innerHTML = `
+    <div class="vparam"><span class="lbl">Station</span><span class="strong" style="color:var(--text)">${st.id} — ${st.name}</span></div>
+    <div class="vparam"><span class="lbl">Data health</span>${statusPillHtml(health==='live'?'normal':'offline')}</div>
+    <div class="vparam"><span class="lbl">Last reading</span><span>${fmtTime(state.lastReading.timestamp)}</span></div>
+    <div class="vparam"><span class="lbl">Readings stored</span><span>${state.readings.length}</span></div>
+  `;
+  const recent = state.alerts.slice(0,4);
+  document.getElementById('home-alert-count').textContent = state.alerts.filter(a=>!a.acknowledged).length;
+  document.getElementById('home-recent-alerts').innerHTML = recent.length ? recent.map(alertRowHtml).join('') : `<div class="empty">No alerts yet — system nominal.</div>`;
+
+  const lastEvent = state.treatmentEvents[0];
+  document.getElementById('home-treatment-snapshot').innerHTML = lastEvent ? `
+    <div class="vparam"><span class="lbl">Cycle</span><span>#${lastEvent.cycle}</span></div>
+    <div class="vparam"><span class="lbl">Turbidity</span><span>${lastEvent.input_snapshot.turbidity_ntu} → ${lastEvent.output_snapshot.turbidity_ntu} NTU</span></div>
+    <div class="vparam"><span class="lbl">TDS</span><span>${lastEvent.input_snapshot.tds_mg_l} → ${lastEvent.output_snapshot.tds_mg_l} mg/L</span></div>
+    <div class="vparam"><span class="lbl">Verdict</span>${statusPillHtml(lastEvent.event_status==='SAFE'?'normal':lastEvent.event_status==='RE-TREAT'?'medium':'critical')}</div>
+  ` : `<div class="empty">No treatment cycle run yet. Go to Purification →</div>`;
+  renderTopStatus(evalr.overall);
+}
+function renderLive(){
+  const evalr = renderReadingCards('live-reading-cards');
+  document.getElementById('live-payload').textContent = JSON.stringify(state.lastReading, null, 2);
+  renderTopStatus(evalr.overall);
+  document.getElementById('btn-offline').textContent = state.offline ? '🔌 Bring Station Online' : '🔌 Toggle Station Offline';
+}
+
+let charts = {};
+function ensureChart(id, label, color){
+  if (charts[id]) return charts[id];
+  const ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx, { type:'line', data:{ labels:[], datasets:[{ label, data:[], borderColor:color, backgroundColor:color+'22', cubicInterpolationMode:'monotone', tension:0.4, pointRadius:0, borderWidth:2, fill:true }]},
+    options:{ responsive:true, animation:false, plugins:{legend:{display:false}},
+      scales:{ x:{ ticks:{color:'#5E7A80', maxTicksLimit:6, font:{family:'JetBrains Mono', size:9}}, grid:{color:'rgba(234,243,241,0.05)'} },
+                y:{ ticks:{color:'#5E7A80', font:{family:'JetBrains Mono', size:9}}, grid:{color:'rgba(234,243,241,0.05)'} } } } });
+  return charts[id];
+}
+function renderHistory(){
+  const rolling = state.readings.slice(-20);
+  const labels = rolling.map(r => fmtTime(r.reading.timestamp));
+  const cfg = [['chart-ph','ph','pH','#2FB6A6'],['chart-turb','turbidity_ntu','Turbidity','#E8A33D'],['chart-tds','tds_mg_l','TDS','#8E7CE8'],['chart-temp','temperature_c','Temp','#E1584F']];
+  cfg.forEach(([id,key,label,color]) => { const c = ensureChart(id,label,color); c.data.labels = labels; c.data.datasets[0].data = rolling.map(r => r.reading[key]); c.update('none'); });
+  const timelineItems = [
+    ...state.alerts.slice(0,6).map(a => ({t:a.timestamp, text:a.message, sev:a.severity})),
+    ...state.treatmentEvents.slice(0,4).map(e => ({t:e.timestamp, text:`Cycle #${e.cycle}: ${e.event_status}`, sev:'info'}))
+  ].sort((a,b) => new Date(b.t) - new Date(a.t)).slice(0,8);
+  document.getElementById('history-timeline').innerHTML = timelineItems.length ? timelineItems.map(i => `<div class="alert-row sev-${i.sev}"><div class="a-main"><div class="a-msg">${i.text}</div><div class="a-meta">${fmtTime(i.t)}</div></div></div>`).join('') : `<div class="empty">No events recorded yet.</div>`;
+}
+
+function alertRowHtml(a){
+  const sevClass = 'sev-' + (a.severity || 'info');
+  return `
+    <div class="alert-row ${sevClass} ${a.acknowledged?'acked':''}">
+      <div class="a-main">
+        <div class="a-msg">${a.message}</div>
+        <div class="a-meta">${a.station_id} · ${a.parameter} = ${a.value} ${a.range ? `(ref. ${a.range})` : ''} · ${fmtTime(a.timestamp)}</div>
+        ${a.cause ? `<div class="a-detail"><b>Possible cause:</b> ${a.cause}</div>` : ''}
+        ${a.impact ? `<div class="a-detail"><b>Environmental impact:</b> ${a.impact}</div>` : ''}
+        ${a.routedTo ? `<div class="a-route">&#9993; Routed to: ${a.routedTo}</div>` : ''}
+      </div>
+      ${!a.acknowledged ? `<button class="btn small ack-btn" data-id="${a.id}">Acknowledge</button>` : `<span class="tag">ACKED</span>`}
+    </div>`;
+}
+function renderAlerts(){
+  const list = document.getElementById('alerts-list');
+  list.innerHTML = state.alerts.length ? state.alerts.map(alertRowHtml).join('') : `<div class="empty">No alerts recorded. Problem detection, severity grading and routing will appear here.</div>`;
+  list.querySelectorAll('.ack-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      const a = state.alerts.find(x => x.id === id);
+      if (a){ a.acknowledged = true; scheduleSave(); renderAlerts(); renderHome(); renderTopStatus(state.readings[state.readings.length-1].eval.overall); }
+    });
+  });
+}
+
+/* ---- Treatment Recommendations screen ---- */
+function kbCardHtml(paramKey, tierKey, kb){
+  const tierCls = tierKey==='traditional' ? 'trad' : 'intl';
+  const selected = state.treatmentMode[TREATMENT_KEY[paramKey]] === tierKey;
+  let body = '';
+  body += `<div class="kb-sub">Equipment / Material</div><ul class="kb-list plain">${(kb.equipment||[]).map(e=>`<li>${e}</li>`).join('')}</ul>`;
+  body += `<div class="kb-sub">Step-by-Step Procedure</div><ul class="kb-list steps">${(kb.steps||[]).map(s=>`<li>${s}</li>`).join('')}</ul>`;
+  if (kb.advantages){ body += `<div class="kb-sub">Advantages</div><ul class="kb-list plain">${kb.advantages.map(a=>`<li>${a}</li>`).join('')}</ul>`; }
+  if (kb.limitations){ body += `<div class="kb-sub">Limitations</div><ul class="kb-list plain">${kb.limitations.map(a=>`<li>${a}</li>`).join('')}</ul>`; }
+  if (kb.benefits){ body += `<div class="kb-sub">Expected Benefits</div><ul class="kb-list plain">${kb.benefits.map(a=>`<li>${a}</li>`).join('')}</ul>`; }
+  if (kb.energyChemical){ body += `<div class="kb-sub">Energy / Chemical Requirement</div><p style="font-size:11.5px; color:var(--text-dim); line-height:1.5;">${kb.energyChemical}</p>`; }
+  if (kb.advantageOverTraditional){ body += `<div class="kb-sub">Advantage Over Traditional</div><ul class="kb-list plain">${kb.advantageOverTraditional.map(a=>`<li>${a}</li>`).join('')}</ul>`; }
+  if (kb.aiIntegration){ body += `<div class="kb-sub">AI / IoT Integration</div><ul class="kb-list plain">${kb.aiIntegration.map(a=>`<li>${a}</li>`).join('')}</ul>`; }
+  if (kb.wasteReduction){ body += `<div class="kb-sub">Chemical / Water / Energy Savings</div><p style="font-size:11.5px; color:var(--text-dim); line-height:1.5;">${kb.wasteReduction}</p>`; }
+  if (kb.predictiveMaintenance){ body += `<div class="kb-sub">Predictive Maintenance</div><p style="font-size:11.5px; color:var(--text-dim); line-height:1.5;">${kb.predictiveMaintenance}</p>`; }
+
+  const isPublic = state.auth.role === 'public';
+  const btnLabel = selected ? '&#10003; Selected for Treatment' : (isPublic ? '&#128274; View Only — Sign in as Authority' : 'Select This Method');
+  const btnDisabled = isPublic ? 'disabled' : '';
+
+  return `
+    <div class="kb-card ${selected?'selected':''}">
+      <span class="kb-tier ${tierCls}">${TIER_LABELS[tierKey]}</span>
+      <div class="kb-title">${kb.title}</div>
+      ${kb.intlRef ? `<div class="kb-ref">&#127760; ${kb.intlRef}</div>` : ''}
+      ${body}
+      <div class="kb-foot">
+        <button class="btn small kb-select-btn ${selected?'primary':''}" data-param="${paramKey}" data-mode="${tierKey}" ${btnDisabled}>${btnLabel}</button>
+      </div>
+    </div>`;
+}
+function renderRecommendations(){
+  const reading = state.lastReading;
+  const st = STATIONS[state.stationKey];
+  const bannerEl = document.getElementById('recommend-station-banner');
+  if (bannerEl) bannerEl.innerHTML = `<b>${st.id} — ${st.name}</b> (${st.coords}) · Primary issue &amp; target stage: ${st.issue}`;
+  const abnormal = PARAM_ORDER.filter(k => directionOf(k, reading[k]) !== null || severityOf(k,reading[k]) !== 'normal');
+  const container = document.getElementById('recommend-list');
+  if (!abnormal.length){
+    container.innerHTML = `<div class="card"><div class="empty">All parameters are within normal reference range for ${STATIONS[state.stationKey].name} — no treatment recommendation required right now.</div></div>`;
+    return;
+  }
+  const html = abnormal.map(paramKey => {
+    const value = reading[paramKey];
+    const sev = severityOf(paramKey, value);
+    const problem = detectProblem(paramKey, value) || { name:`${LIMITS[paramKey].label} Out of Range`, cause:'Not yet characterized for this direction.', impact:'Monitor and re-assess.' };
+    const tKey = TREATMENT_KEY[paramKey];
+    const kb = TREATMENT_KB[paramKey];
+    return `
+    <div class="problem-block">
+      <div class="problem-head">
+        <div>
+          <div class="p-name">${problem.name}</div>
+          <div class="p-param">${LIMITS[paramKey].label} · Station ${STATIONS[state.stationKey].id}</div>
+        </div>
+        ${statusPillHtml(sev)}
+      </div>
+      <div class="problem-body">
+        <div class="problem-facts">
+          <div class="pf"><div class="pf-lbl">Current Value</div><div class="pf-val">${value}${LIMITS[paramKey].unit}</div></div>
+          <div class="pf"><div class="pf-lbl">Normal / Target Range</div><div class="pf-val">${LIMITS[paramKey].normal[0]}–${LIMITS[paramKey].normal[1]}${LIMITS[paramKey].unit}</div></div>
+          <div class="pf"><div class="pf-lbl">Severity</div><div class="pf-val">${SEV_LABEL[sev]}</div></div>
+          <div class="pf"><div class="pf-lbl">Active Treatment Tier</div><div class="pf-val">${TIER_LABELS[state.treatmentMode[tKey]]}</div></div>
+        </div>
+        <div class="cause-impact">
+          <div class="ci-box"><div class="ci-lbl">Possible Cause</div><p>${problem.cause}</p></div>
+          <div class="ci-box"><div class="ci-lbl">Potential Environmental Impact</div><p>${problem.impact}</p></div>
+        </div>
+        <div class="route-banner">&#9993; Government / Admin routing: ${ROUTING[sev] || ROUTING.low}</div>
+        <div class="kb-grid">
+          ${kbCardHtml(paramKey,'traditional', kb.traditional)}
+          ${kbCardHtml(paramKey,'international', kb.international)}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  container.innerHTML = html;
+  container.querySelectorAll('.kb-select-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = btn.getAttribute('data-param'), m = btn.getAttribute('data-mode');
+      const tKey = TREATMENT_KEY[p] || p;
+      state.treatmentMode[tKey] = m;
+      scheduleSave();
+      renderRecommendations(); renderPurification();
+    });
+  });
+}
+
+/* ---- Purification (execution) screen ---- */
+function renderActiveTiersSummary(){
+  const rows = Object.keys(TREATMENT_KEY).map(paramKey => {
+    const tKey = TREATMENT_KEY[paramKey];
+    const mode = state.treatmentMode[tKey];
+    return `<div class="vparam"><span class="lbl">${LIMITS[paramKey].label}</span><span>${TIER_LABELS[mode]}</span></div>`;
+  }).join('');
+  document.getElementById('active-tiers-summary').innerHTML = rows;
+}
+function stageRowHtml(stage, idx){
+  const flagHtml = stage.flag ? `<span class="stage-flag ${stage.flag.indexOf('BYPASS')>=0 ? 'save' : (stage.flag.indexOf('INEFFECTIVE')>=0 || stage.flag.indexOf('HIGH-PRESSURE')>=0) ? 'warn' : 'info'}">${stage.flag}</span>` : '';
+  const gaugePct = stage.energyKW ? clamp((stage.energyKW/40)*100, 4, 100) : 0;
+  const gaugeHtml = (stage.key === 'temp' && stage.energyKW !== undefined) ? `
+    <div class="kw-gauge">
+      <div class="kw-ring" style="--pct:${gaugePct}"><span>${stage.energyKW}</span></div>
+      <div class="kw-text">Geothermal Heat Energy Harvested<br><b>${stage.energyKW} kW</b> at assumed ${FLOW_RATE_KGS} L/s flow, target discharge ${GSHP_TARGET_C}°C</div>
+    </div>` : '';
+  return `
+    <div class="stage-item">
+      <div class="s-head"><div class="s-name"><span class="s-idx">${String(idx+1).padStart(2,'0')}</span>${stage.name}</div>${flagHtml}</div>
+      <div class="stage-vals">
+        <div><span class="v-lbl">pH</span>${stage.ph}</div>
+        <div><span class="v-lbl">Turbidity</span>${stage.turbidity_ntu} NTU</div>
+        <div><span class="v-lbl">TDS</span>${stage.tds_mg_l} mg/L${stage.concentrate_mg_l ? ` <span style="color:var(--text-dimmer)">(reject ${stage.concentrate_mg_l})</span>` : ''}</div>
+        <div><span class="v-lbl">Temp</span>${stage.temperature_c}°C</div>
+      </div>
+      <div class="mode-note">${stage.note}</div>
+      ${gaugeHtml}
+    </div>`;
+}
+function renderPurification(){
+  renderActiveTiersSummary();
+  const st = STATIONS[state.stationKey], b = st.benchmark;
+  const bcard = document.getElementById('purif-benchmark-card');
+  if (bcard) bcard.innerHTML = `<div class="card-title">Target Purified Benchmark — ${st.id} (IS 10500)</div>
+    <div class="stage-vals">
+      <div><span class="v-lbl">pH</span>${b.ph[0]}–${b.ph[1]}</div>
+      <div><span class="v-lbl">Turbidity</span>&lt; ${b.turb_max} NTU</div>
+      <div><span class="v-lbl">TDS</span>${b.tds[0]}–${b.tds[1]} mg/L</div>
+      <div><span class="v-lbl">Temp</span>${b.temp[0]}–${b.temp[1]}°C</div>
+    </div>`;
+  const input = state.cycle.input || state.lastReading;
+  const chain = computeChain(input, state.treatmentMode);
+  document.getElementById('stage-chain').innerHTML =
+    (state.cycle.input ? `<div class="banner">Re-treat cycle in progress — input is the output of cycle #${state.cycle.count} (previous result: ${state.cycle.lastVerdict}).</div>` : '') +
+    chain.map((s,i) => stageRowHtml(s,i)).join('');
+}
+
+/* ---- Verification screen ---- */
+function withinLimit(key, value){ const lim = LIMITS[key]; return value >= lim.normal[0] && value <= lim.normal[1]; }
+function renderVerification(){
+  const lastEvent = state.treatmentEvents[0];
+  const raw = lastEvent ? lastEvent.input_snapshot : state.lastReading;
+  const treated = lastEvent ? lastEvent.output_snapshot : state.lastReading;
+
+  document.getElementById('verify-raw').innerHTML = PARAM_ORDER.map(k => `<div class="vparam"><span class="lbl">${LIMITS[k].label}</span><span>${raw[k]}${LIMITS[k].unit} <span class="delta flat">raw ${STATIONS[state.stationKey][k==='ph'?'ph':k==='turbidity_ntu'?'turb':k==='tds_mg_l'?'tds':'temp'][0]}–${STATIONS[state.stationKey][k==='ph'?'ph':k==='turbidity_ntu'?'turb':k==='tds_mg_l'?'tds':'temp'][1]}${LIMITS[k].unit}</span></span></div>`).join('') + `<div class="vparam"><span class="lbl">Geothermal kW</span><span>—</span></div>`;
+  document.getElementById('verify-treated').innerHTML = PARAM_ORDER.map(k => {
+    const val = treated[k]; const ok = withinBenchmark(k, val, state.stationKey);
+    return `<div class="vparam"><span class="lbl">${LIMITS[k].label}</span><span>${val}${LIMITS[k].unit} <span class="delta ${ok?'good':'bad'}">${ok?'meets':'misses'} benchmark ${benchmarkLabel(k, state.stationKey)}</span></span></div>`;
+  }).join('') + `<div class="vparam"><span class="lbl">Geothermal kW</span><span>${lastEvent ? lastEvent.energyKW : 0} kW <span class="delta good">recovered</span></span></div>`;
+
+  const banner = document.getElementById('verdict-banner');
+  if (!lastEvent){
+    banner.innerHTML = `<div class="verdict-banner"><div><div class="v-title">No Treatment Cycle Run Yet</div><div class="v-sub">Run a treatment cycle from the Purification screen to perform the secondary quality check.</div></div></div>`;
+  } else {
+    const cls = lastEvent.event_status==='SAFE' ? 'safe' : lastEvent.event_status==='RE-TREAT' ? 'retreat' : 'escalate';
+    const title = lastEvent.event_status==='SAFE' ? 'SAFE — APPROVED FOR REUSE / DISCHARGE' : lastEvent.event_status==='RE-TREAT' ? 'RE-TREAT REQUIRED' : 'ESCALATED — QUALITY CRITERIA NOT MET';
+    const sub = lastEvent.event_status==='SAFE' ? `Cycle #${lastEvent.cycle} brought all parameters within the safe reference range.` : `Cycle #${lastEvent.cycle} did not bring all parameters into range. ${lastEvent.event_status==='ESCALATE' ? 'An escalation alert has been routed — see Alerts.' : 'Run another treatment cycle to continue.'}`;
+    banner.innerHTML = `<div class="verdict-banner ${cls}"><div><div class="v-title">${title}</div><div class="v-sub">${sub}</div></div>${statusPillHtml(lastEvent.event_status==='SAFE'?'normal':lastEvent.event_status==='RE-TREAT'?'medium':'critical')}</div>`;
+  }
+
+  const rows = state.treatmentEvents.slice(0,12).map(e => {
+    const effTurb = e.efficiency.turbidity_ntu, effTds = e.efficiency.tds_mg_l;
+    return `<tr>
+      <td class="strong">#${e.cycle}</td><td>${fmtTime(e.timestamp)}</td>
+      <td>${e.input_snapshot.turbidity_ntu} → ${e.output_snapshot.turbidity_ntu} NTU${effTurb!==null?` (${effTurb}%)`:''}</td>
+      <td>${e.input_snapshot.tds_mg_l} → ${e.output_snapshot.tds_mg_l} mg/L${effTds!==null?` (${effTds}%)`:''}</td>
+      <td>${e.input_snapshot.ph} → ${e.output_snapshot.ph}</td>
+      <td>${e.energyKW} kW</td>
+      <td class="strong">${e.event_status}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('verify-log-body').innerHTML = rows || `<tr><td colspan="7" style="text-align:center; color:var(--text-dimmer);">No verification runs logged yet.</td></tr>`;
+}
+
+/* ---------------------- MAP (Leaflet — Jharkhand mining hubs, light mode, state-bounded) ---------------------- */
+let mapInstance = null;
+let mapMarkers = {};
+const JHARKHAND_BOUNDS = [[21.9,83.2],[25.45,87.7]]; // approx state bounding box
+function initMap(){
+  if (mapInstance || typeof L === 'undefined') return;
+  const el = document.getElementById('jharkhand-map');
+  if (!el) return;
+  const bounds = L.latLngBounds(JHARKHAND_BOUNDS);
+  mapInstance = L.map('jharkhand-map', {
+    zoomControl:true, attributionControl:true, scrollWheelZoom:true,
+    maxBounds: bounds.pad(0.06), maxBoundsViscosity:1.0, worldCopyJump:false
+  }).fitBounds(bounds);
+  mapInstance.setMinZoom(mapInstance.getZoom());
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution:'&copy; OpenStreetMap contributors &copy; CARTO', subdomains:'abcd', maxZoom:12
+  }).addTo(mapInstance);
+  Object.keys(STATIONS).forEach(key => {
+    const s = STATIONS[key];
+    const marker = L.circleMarker([s.lat, s.lng], { radius:9, weight:2, color:'#ffffff', fillColor:'#E23F3F', fillOpacity:0.9 }).addTo(mapInstance);
+    marker.bindPopup(`<b>${s.id} — ${s.name}</b><br>${s.loc}<br>${s.coords}`);
+    marker.on('click', () => switchStation(key));
+    mapMarkers[key] = marker;
+  });
+  setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 80);
+}
+function renderMapMarkerStyles(){
+  if (!mapInstance) return;
+  const isPublic = state.auth.role === 'public';
+  Object.keys(STATIONS).forEach(key => {
+    const marker = mapMarkers[key];
+    if (!marker) return;
+    const s = STATIONS[key];
+    const active = key === state.stationKey;
+    const purified = state.stationVerdicts[key] === 'SAFE';
+    const color = purified ? '#1FA65A' : '#E23F3F';
+    marker.setStyle({ radius: active ? 12 : 9, color:'#ffffff', fillColor:color, fillOpacity:0.92, weight: active ? 3 : 2 });
+    if (active) marker.bringToFront();
+    const popupBody = isPublic
+      ? `<b>${s.name}</b><br>${s.loc}<br>${s.coords}<br><b style="color:${purified?'#178576':'#C23B33'}">${purified ? 'Safe to Drink' : 'Not Safe to Drink'}</b>`
+      : `<b>${s.id} — ${s.name}</b><br>${s.loc}<br>${s.coords}<br><i>${s.issue}</i>`;
+    marker.setPopupContent(popupBody);
+  });
+  const legend = document.getElementById('map-legend');
+  if (legend){
+    const line1 = isPublic ? 'Safe to Drink' : 'Purified / Safe (post-treatment meets IS 10500 benchmark)';
+    const line2 = isPublic ? 'Not Safe to Drink' : 'Affected / Contaminated (raw, not yet verified safe)';
+    legend.innerHTML =
+      `<span style="display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--text-dim);"><span style="width:10px;height:10px;border-radius:50%;background:#1FA65A; display:inline-block; border:2px solid #fff;"></span>${line1}</span>` +
+      `<span style="display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--text-dim);"><span style="width:10px;height:10px;border-radius:50%;background:#E23F3F; display:inline-block; border:2px solid #fff;"></span>${line2}</span>` +
+      `<span style="margin-left:auto; font-size:10.5px; color:var(--text-dimmer);">Active station shown larger — click a marker to view</span>`;
+  }
+}
+
+function renderStations(){
+  const isPublic = state.auth.role === 'public';
+  const html = Object.keys(STATIONS).map(key => {
+    const s = STATIONS[key]; const active = key === state.stationKey; const b = s.benchmark;
+    const drinkable = state.stationVerdicts[key] === 'SAFE';
+
+    if (isPublic){
+      const badgeColor = drinkable ? 'var(--teal)' : 'var(--coral)';
+      const badgeGlow = drinkable ? 'var(--teal-glow)' : 'var(--coral-glow)';
+      const badgeText = drinkable ? '&#128994; Safe to Drink' : '&#128308; Not Safe to Drink';
+      const badgeSub = drinkable ? 'Water at this location currently meets safe-water standards.' : 'Water at this location is currently unsafe for drinking — under monitoring.';
+      return `<div class="card station-card ${active?'active-station':''}" data-station="${key}" style="flex-direction:column; align-items:stretch; gap:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+          <div class="s-info">
+            <div class="s-name">${s.name}</div>
+            <div class="s-loc">${s.loc} · ${s.coords}</div>
+          </div>
+          ${active ? `<span class="tag">Selected</span>` : `<button class="btn small">View</button>`}
+        </div>
+        <div class="ci-box" style="background:${badgeGlow}; border:1px solid ${badgeColor}; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+          <div>
+            <div class="ci-lbl" style="color:${badgeColor}; font-size:13px;">${badgeText}</div>
+            <div class="note" style="margin-top:4px;">${badgeSub}</div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    return `<div class="card station-card ${active?'active-station':''}" data-station="${key}" style="flex-direction:column; align-items:stretch; gap:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <div class="s-info">
+          <div class="s-name">${s.id} — ${s.name}</div>
+          <div class="s-loc">${s.loc} · ${s.coords}</div>
+        </div>
+        ${active ? statusPillHtml('normal') : `<button class="btn small">Switch</button>`}
+      </div>
+      <div class="cause-impact" style="margin-bottom:0;">
+        <div class="ci-box" style="background:var(--coral-glow); border:1px solid rgba(225,88,79,.25);">
+          <div class="ci-lbl" style="color:var(--coral);">&#128308; Raw Mine Water — Unsafe</div>
+          <div class="s-range">pH ${s.ph[0]}–${s.ph[1]} · Turb ${s.turb[0]}–${s.turb[1]} NTU · TDS ${s.tds[0]}–${s.tds[1]} mg/L · Temp ${s.temp[0]}–${s.temp[1]}°C</div>
+        </div>
+        <div class="ci-box" style="background:var(--teal-glow); border:1px solid rgba(47,182,166,.25);">
+          <div class="ci-lbl" style="color:var(--teal);">&#128994; Purified Benchmark — IS 10500</div>
+          <div class="s-range">pH ${b.ph[0]}–${b.ph[1]} · Turb &lt; ${b.turb_max} NTU · TDS ${b.tds[0]}–${b.tds[1]} mg/L · Temp ${b.temp[0]}–${b.temp[1]}°C</div>
+        </div>
+      </div>
+      <div class="note" style="margin-top:2px;"><b style="color:var(--text-dim);">Primary issue &amp; target stage:</b> ${s.issue}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('stations-list').innerHTML = html;
+  document.querySelectorAll('.station-card').forEach(card => card.addEventListener('click', () => switchStation(card.getAttribute('data-station'))));
+  const stationsScreenEl = document.getElementById('screen-stations');
+  if (stationsScreenEl && stationsScreenEl.classList.contains('active')) initMap();
+  renderMapMarkerStyles();
+}
+
+function populateStationSelect(){
+  const sel = document.getElementById('station-select');
+  sel.innerHTML = Object.keys(STATIONS).map(key => `<option value="${key}">${STATIONS[key].id} — ${STATIONS[key].name}</option>`).join('');
+  sel.value = state.stationKey;
+  sel.addEventListener('change', () => switchStation(sel.value));
+}
+function switchStation(key){
+  if (!STATIONS[key]) return;
+  state.stationKey = key;
+  const seed = seedReadingForStation(key);
+  const evalr = evaluateReading(seed, null);
+  state.lastReading = seed; state.lastReadingTime = Date.now();
+  state.readings = [{ reading: seed, eval: evalr }];
+  state.lastSeverity = {};
+  state.cycle = { count:0, input:null, lastVerdict:null };
+  Object.keys(charts).forEach(id => { charts[id].data.labels = []; charts[id].data.datasets[0].data = []; charts[id].update('none'); });
+  document.getElementById('station-select').value = key;
+  scheduleSave();
+  render();
+}
+
+function render(){
+  const evalr = state.readings.length ? state.readings[state.readings.length-1].eval : evaluateReading(state.lastReading, null);
+  renderTopStatus(evalr.overall);
+  renderHome();
+  renderLive();
+  renderHistory();
+  renderAlerts();
+  renderRecommendations();
+  renderPurification();
+  renderVerification();
+  renderStations();
+}
+
+/* ---------------------- NAV ---------------------- */
+const TITLES = {
+  home:['Home','System overview and live status'],
+  live:['Live Monitoring','pH, turbidity, TDS/EC, temperature with severity-graded status'],
+  history:['History','Rolling time-series graphs and event timeline'],
+  alerts:['Alerts','Problem detection, severity, cause/impact and government/admin routing'],
+  recommend:['AI Treatment Recommendation','Traditional / Advanced options per detected problem'],
+  purification:['Treatment Execution','Runs the selected tier per parameter through the treatment chain'],
+  verification:['Post-Treatment Verification','Secondary quality check and SAFE / RE-TREAT / ESCALATE verdict'],
+  stations:['Stations','Jharkhand mining-hub monitoring registry'],
+};
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const s = btn.getAttribute('data-screen');
+    document.querySelectorAll('.screen').forEach(sc => sc.classList.remove('active'));
+    document.getElementById('screen-'+s).classList.add('active');
+    document.getElementById('topbar-title').textContent = TITLES[s][0];
+    document.getElementById('topbar-desc').textContent = TITLES[s][1];
+    if (s === 'stations'){ initMap(); setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 60); }
+  });
+});
+
+/* ---------------------- CONTROLS ---------------------- */
+document.getElementById('sim-toggle').addEventListener('click', (e) => {
+  state.paused = !state.paused;
+  e.target.innerHTML = state.paused ? '&#9654; Resume Feed' : '&#10073;&#10073; Pause Feed';
+});
+document.getElementById('btn-anomaly').addEventListener('click', () => { state.anomalyPulse = 4; });
+document.getElementById('btn-offline').addEventListener('click', () => { state.offline = !state.offline; render(); });
+document.getElementById('btn-run-purification').addEventListener('click', runTreatmentCycle);
+document.getElementById('btn-clear-acked').addEventListener('click', () => {
+  state.alerts = state.alerts.filter(a => !a.acknowledged);
+  scheduleSave();
+  renderAlerts();
+});
+
+/* ---------------------- THEME (dark / light) ---------------------- */
+let currentTheme = 'dark';
+function updateChartsTheme(){
+  const tickColor = currentTheme === 'light' ? '#4A6167' : '#5E7A80';
+  const gridColor = currentTheme === 'light' ? 'rgba(16,36,43,0.07)' : 'rgba(234,243,241,0.05)';
+  Object.values(charts).forEach(ch => {
+    ch.options.scales.x.ticks.color = tickColor;
+    ch.options.scales.y.ticks.color = tickColor;
+    ch.options.scales.x.grid.color = gridColor;
+    ch.options.scales.y.grid.color = gridColor;
+    ch.update('none');
+  });
+}
+function applyTheme(t){
+  currentTheme = t;
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.innerHTML = t === 'dark' ? '&#9789; Light Mode' : '&#9788; Dark Mode';
+  updateChartsTheme();
+}
+document.getElementById('theme-toggle').addEventListener('click', () => applyTheme(currentTheme === 'dark' ? 'light' : 'dark'));
+
+/* ---------------------- AUTHORIZATION (Govt. of Jharkhand + Public sign-in) ---------------------- */
+const AUTHORIZED_IDS = ['GOJ-1001','GOJ-1002','GOJ-1003','GOJ-1004','GOJ-1005'];
+const INDIAN_MOBILE_RE = /^[6-9]\d{9}$/;
+
+document.getElementById('tab-authority').addEventListener('click', () => switchAuthTab('authority'));
+document.getElementById('tab-public').addEventListener('click', () => switchAuthTab('public'));
+function switchAuthTab(which){
+  document.getElementById('tab-authority').classList.toggle('active', which === 'authority');
+  document.getElementById('tab-public').classList.toggle('active', which === 'public');
+  document.getElementById('auth-form-authority').style.display = which === 'authority' ? 'block' : 'none';
+  document.getElementById('auth-form-public').style.display = which === 'public' ? 'block' : 'none';
+  const errEl = document.getElementById('auth-error');
+  errEl.style.display = 'none';
+}
+
+function finalizeSignIn(role, id){
+  state.auth = { signedIn:true, role, id };
+  document.getElementById('auth-error').style.display = 'none';
+  document.getElementById('auth-gate').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  const badge = document.getElementById('sfoot-auth');
+  if (badge) badge.textContent = role === 'authority' ? `Signed in: ${id} (Authority)` : `Signed in: ${id} (Public Viewer)`;
+  applyRolePermissions();
+  render();
+  if (mapInstance) setTimeout(() => mapInstance.invalidateSize(), 100);
+}
+
+function attemptSignIn(){
+  const input = document.getElementById('auth-id-input');
+  const val = (input.value || '').trim().toUpperCase();
+  const errEl = document.getElementById('auth-error');
+  if (!val){ errEl.textContent = 'Please enter your authorized personnel ID.'; errEl.style.display = 'block'; return; }
+  if (AUTHORIZED_IDS.includes(val)){
+    finalizeSignIn('authority', val);
+  } else {
+    errEl.textContent = 'ID not recognized — verification failed. Contact the Jharkhand DMG administrator.';
+    errEl.style.display = 'block';
+  }
+}
+function attemptPublicSignIn(){
+  const input = document.getElementById('auth-phone-input');
+  const val = (input.value || '').trim().replace(/\D/g, '');
+  const errEl = document.getElementById('auth-error');
+  if (!INDIAN_MOBILE_RE.test(val)){
+    errEl.textContent = 'Enter a valid 10-digit Indian mobile number (starting 6-9).';
+    errEl.style.display = 'block';
+    return;
+  }
+  finalizeSignIn('public', '+91 ' + val);
+}
+function applyRolePermissions(){
+  const isPublic = state.auth.role === 'public';
+  const runBtn = document.getElementById('btn-run-purification');
+  if (runBtn){
+    runBtn.disabled = isPublic;
+    runBtn.title = isPublic ? 'Sign in as Authority to run a treatment cycle' : '';
+  }
+  const offlineBtn = document.getElementById('btn-offline');
+  const anomalyBtn = document.getElementById('btn-anomaly');
+  if (offlineBtn) offlineBtn.disabled = isPublic;
+  if (anomalyBtn) anomalyBtn.disabled = isPublic;
+
+  // Public viewers only get Mining Areas (map + drinkability status) —
+  // no sensor detail, alerts, or treatment-process screens.
+  const PUBLIC_ALLOWED_SCREENS = ['stations'];
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    const s = btn.getAttribute('data-screen');
+    btn.style.display = (isPublic && !PUBLIC_ALLOWED_SCREENS.includes(s)) ? 'none' : '';
+  });
+
+  if (isPublic){
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    const stationsNavBtn = document.querySelector('.nav-item[data-screen="stations"]');
+    if (stationsNavBtn) stationsNavBtn.classList.add('active');
+    document.querySelectorAll('.screen').forEach(sc => sc.classList.remove('active'));
+    document.getElementById('screen-stations').classList.add('active');
+    document.getElementById('topbar-title').textContent = 'Mining Areas — Water Safety Status';
+    document.getElementById('topbar-desc').textContent = 'Public view: mining area locations and whether the water is currently safe to drink';
+    initMap();
+    setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 80);
+  }
+  renderStations();
+}
+function signOut(){
+  state.auth = { signedIn:false, role:null, id:null };
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-gate').style.display = 'flex';
+  document.getElementById('auth-id-input').value = '';
+  document.getElementById('auth-phone-input').value = '';
+  document.getElementById('auth-error').style.display = 'none';
+  document.querySelectorAll('.nav-item').forEach(b => b.style.display = '');
+  switchAuthTab('authority');
+}
+document.getElementById('auth-signin-btn').addEventListener('click', attemptSignIn);
+document.getElementById('auth-id-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') attemptSignIn(); });
+document.getElementById('auth-public-signin-btn').addEventListener('click', attemptPublicSignIn);
+document.getElementById('auth-phone-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') attemptPublicSignIn(); });
+document.getElementById('btn-sign-out').addEventListener('click', signOut);
+
+/* ---------------------- BOOT ---------------------- */
+(async function boot(){
+  await loadState();
+  populateStationSelect();
+  render();
+  setInterval(tick, 3000);
+  initGovFooterWidgets();
+})();
+</script>
+
+
+</body></html>
+
